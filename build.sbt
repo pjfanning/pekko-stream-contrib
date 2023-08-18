@@ -4,22 +4,22 @@ name := "pekko-stream-contrib"
 crossScalaVersions := Seq("2.13.11", "2.12.18")
 scalaVersion := crossScalaVersions.value.head
 
-val AkkaVersion = "2.6.21"
+val PekkoVersion = "1.0.1"
 
-resolvers += "Akka library repository".at("https://repo.akka.io/maven")
+resolvers += "Sonatype Staging" at
+  "https://oss.sonatype.org/content/repositories/staging"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
-  "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test,
+  "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion % Test,
   "junit" % "junit" % "4.12" % Test, // Common Public License 1.0
   "com.novocode" % "junit-interface" % "0.11" % Test, // BSD-like
   "com.google.jimfs" % "jimfs" % "1.1" % Test, // ApacheV2
   "org.scalatest" %% "scalatest" % "3.2.16" % Test, // ApacheV2
   "org.scalamock" %% "scalamock" % "4.4.0" % Test, // ApacheV2
-  "com.miguno.akka" %% "akka-mock-scheduler" % "0.5.5" % Test // ApacheV2
+  "com.github.pjfanning" %% "pekko-mock-scheduler" % "0.6.0" % Test // ApacheV2
 )
 
-organizationHomepage := Some(url("http://www.lightbend.com"))
 homepage := Some(url("https://github.com/pjfanning/pekko-stream-contrib"))
 licenses := Seq(("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
 scmInfo := Some(
