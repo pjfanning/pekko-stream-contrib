@@ -5,9 +5,9 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.japi.function
-import org.apache.pekko.stream.scaladsl.{GraphDSL, Keep}
-import org.apache.pekko.stream.{Attributes, FanOutShape2, FlowShape, Graph}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import org.apache.pekko.stream.scaladsl.{ GraphDSL, Keep }
+import org.apache.pekko.stream.{ Attributes, FanOutShape2, FlowShape, Graph }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
 
 /**
  * This companion defines a factory for [[PartitionWith]] instances, see [[PartitionWith.apply]].
@@ -40,7 +40,7 @@ object PartitionWith {
    * @return [[PartitionWith]] instance
    */
   def create[In, Out0, Out1](p: function.Function[In, Either[Out0, Out1]],
-                             eagerCancel: Boolean = false): PartitionWith[In, Out0, Out1] =
+      eagerCancel: Boolean = false): PartitionWith[In, Out0, Out1] =
     new PartitionWith(p.apply, eagerCancel)
 
   object Implicits {
@@ -106,8 +106,7 @@ final class PartitionWith[In, Out0, Out1] private (p: In => Either[Out0, Out1], 
         override def onUpstreamFinish() =
           if (pending eq null)
             completeStage()
-      }
-    )
+      })
 
     setHandler(
       out0,
@@ -121,12 +120,12 @@ final class PartitionWith[In, Out0, Out1] private (p: In => Either[Out0, Out1], 
               if (isAvailable(out1))
                 pull(in)
             }
-          } else if (!hasBeenPulled(in)) pull(in)
+          }
+          else if (!hasBeenPulled(in)) pull(in)
 
         override def onDownstreamFinish(): Unit =
           downstreamFinished()
-      }
-    )
+      })
 
     setHandler(
       out1,
@@ -140,12 +139,12 @@ final class PartitionWith[In, Out0, Out1] private (p: In => Either[Out0, Out1], 
               if (isAvailable(out0))
                 pull(in)
             }
-          } else if (!hasBeenPulled(in)) pull(in)
+          }
+          else if (!hasBeenPulled(in)) pull(in)
 
         override def onDownstreamFinish(): Unit =
           downstreamFinished()
-      }
-    )
+      })
 
     private def downstreamFinished(): Unit = {
       activeDownstreamCount -= 1

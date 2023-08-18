@@ -6,13 +6,12 @@ package org.apache.pekko.stream.contrib
 
 import java.util.concurrent.ThreadLocalRandom
 
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
-import org.apache.pekko.stream.{Attributes, FlowShape, Inlet, Outlet}
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
+import org.apache.pekko.stream.{ Attributes, FlowShape, Inlet, Outlet }
 
 object Sample {
 
   /**
-   *
    * returns every nth elements
    *
    * @param nth must > 0
@@ -22,7 +21,6 @@ object Sample {
   def apply[T](nth: Int): Sample[T] = Sample[T](() => nth)
 
   /**
-   *
    * randomly sampling on a stream
    *
    * @param maxStep must > 0, default 1000, the randomly step will be between 1 (inclusive) and maxStep (inclusive)

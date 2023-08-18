@@ -7,9 +7,9 @@ package org.apache.pekko.stream.contrib
 import java.util.concurrent.atomic.AtomicInteger
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.ActorMaterializer
-import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
-import org.apache.pekko.stream.testkit.{TestPublisher, TestSubscriber}
+import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
+import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

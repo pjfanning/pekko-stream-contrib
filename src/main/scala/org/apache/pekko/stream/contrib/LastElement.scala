@@ -4,9 +4,9 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler, OutHandler}
-import org.apache.pekko.stream.{Attributes, FlowShape, Inlet, Outlet}
-import scala.concurrent.{Future, Promise}
+import org.apache.pekko.stream.stage.{ GraphStageLogic, GraphStageWithMaterializedValue, InHandler, OutHandler }
+import org.apache.pekko.stream.{ Attributes, FlowShape, Inlet, Outlet }
+import scala.concurrent.{ Future, Promise }
 
 /**
  * This companion defines a factory for [[LastElement]] instances, see [[LastElement.apply]].
@@ -67,12 +67,12 @@ final class LastElement[A] private extends GraphStageWithMaterializedValue[FlowS
             matValue.success(currentElement)
             super.onUpstreamFinish()
           }
-        }
-      )
+        })
 
-      setHandler(out, new OutHandler {
-        override def onPull() = pull(in)
-      })
+      setHandler(out,
+        new OutHandler {
+          override def onPull() = pull(in)
+        })
     }
 
     (logic, matValue.future)

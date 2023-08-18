@@ -10,8 +10,8 @@ import java.time.temporal.ChronoUnit
 import org.apache.pekko.Done
 import org.apache.pekko.annotation.InternalApi
 import org.apache.pekko.stream._
-import org.apache.pekko.stream.scaladsl.{Flow, GraphDSL, Sink}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import org.apache.pekko.stream.scaladsl.{ Flow, GraphDSL, Sink }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
 import LatencyTimer._
 
 import scala.concurrent.Future
@@ -27,12 +27,13 @@ private final class LatencyTimerStartStage[InOut](private val clock: Clock) exte
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
-    setHandler(in, new InHandler {
-      override def onPush(): Unit = {
-        emit(outTimerContext, TimerContext(clock))
-        push(out, grab(in))
-      }
-    })
+    setHandler(in,
+      new InHandler {
+        override def onPush(): Unit = {
+          emit(outTimerContext, TimerContext(clock))
+          push(out, grab(in))
+        }
+      })
 
     private[this] val outHandler = new OutHandler {
       override def onPull(): Unit = if (!hasBeenPulled(in)) tryPull(in)
@@ -65,20 +66,22 @@ private final class LatencyTimerEndStage[InOut] extends GraphStage[TimerEndShape
           timerContext = None
           push(out, element)
         }
-      }
-    )
+      })
 
-    setHandler(inTimerContext, new InHandler {
-      override def onPush(): Unit = timerContext = Some(grab(inTimerContext))
-    })
+    setHandler(inTimerContext,
+      new InHandler {
+        override def onPush(): Unit = timerContext = Some(grab(inTimerContext))
+      })
 
-    setHandler(out, new OutHandler {
-      override def onPull(): Unit = tryPull(in)
-    })
+    setHandler(out,
+      new OutHandler {
+        override def onPull(): Unit = tryPull(in)
+      })
 
-    setHandler(outTimedResult, new OutHandler {
-      override def onPull(): Unit = tryPull(inTimerContext)
-    })
+    setHandler(outTimedResult,
+      new OutHandler {
+        override def onPull(): Unit = tryPull(inTimerContext)
+      })
   }
 }
 
@@ -92,8 +95,8 @@ private final class LatencyTimerEndStage[InOut] extends GraphStage[TimerEndShape
  * }}}
  */
 private final case class TimerStartShape[InOut](in: Inlet[InOut],
-                                                out: Outlet[InOut],
-                                                outTimerContext: Outlet[TimerContext])
+    out: Outlet[InOut],
+    outTimerContext: Outlet[TimerContext])
     extends Shape {
   override val inlets: collection.immutable.Seq[Inlet[_]] = in :: Nil
   override val outlets: collection.immutable.Seq[Outlet[_]] = out :: outTimerContext :: Nil
@@ -112,9 +115,9 @@ private final case class TimerStartShape[InOut](in: Inlet[InOut],
  * }}}
  */
 private final case class TimerEndShape[InOut](in: Inlet[InOut],
-                                              inTimerContext: Inlet[TimerContext],
-                                              out: Outlet[InOut],
-                                              outTimedResult: Outlet[TimedResult[InOut]])
+    inTimerContext: Inlet[TimerContext],
+    out: Outlet[InOut],
+    outTimedResult: Outlet[TimedResult[InOut]])
     extends Shape {
   override val inlets: collection.immutable.Seq[Inlet[_]] = in :: inTimerContext :: Nil
   override val outlets: collection.immutable.Seq[Outlet[_]] = out :: outTimedResult :: Nil
@@ -144,8 +147,7 @@ object LatencyTimer {
   @InternalApi // mainly for testing (mock Clock)
   private[contrib] def createGraph[I, O, Mat](
       flow: Flow[I, O, Mat],
-      sink: Graph[SinkShape[TimedResult[O]], Future[Done]]
-  )(clock: Clock): Flow[I, O, Mat] = {
+      sink: Graph[SinkShape[TimedResult[O]], Future[Done]])(clock: Clock): Flow[I, O, Mat] = {
     val graph = GraphDSL.create(flow) { implicit builder: GraphDSL.Builder[Mat] =>
       import GraphDSL.Implicits._
       fl =>

@@ -6,7 +6,7 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream._
-import org.apache.pekko.stream.scaladsl.{Sink, Source}
+import org.apache.pekko.stream.scaladsl.{ Sink, Source }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -44,7 +44,7 @@ class SampleSpec extends AnyWordSpec with Matchers {
         .via(Sample(mockRandom))
         .runWith(Sink.seq)
 
-      Await.result(future, 3 seconds) should ===((1 :: 3 :: 6 :: 10 :: Nil))
+      Await.result(future, 3 seconds) should ===(1 :: 3 :: 6 :: 10 :: Nil)
     }
 
     "throws exception when next step <= 0" in {

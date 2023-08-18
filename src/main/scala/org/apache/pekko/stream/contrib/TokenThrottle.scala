@@ -5,8 +5,8 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.scaladsl.GraphDSL
-import org.apache.pekko.stream.{Attributes, FanInShape2, FlowShape, Graph, Inlet, Outlet, SourceShape}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import org.apache.pekko.stream.{ Attributes, FanInShape2, FlowShape, Graph, Inlet, Outlet, SourceShape }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
 import org.apache.pekko.util.OptionVal
 import org.apache.pekko.util.OptionVal._
 
@@ -126,8 +126,7 @@ final class TokenThrottle[A](costCalculation: A => Long) extends GraphStage[FanI
           if (buffer.isEmpty) completeStage()
           elemsCompleted = true
         }
-      }
-    )
+      })
 
     setHandler(
       tokensIn,
@@ -141,11 +140,11 @@ final class TokenThrottle[A](costCalculation: A => Long) extends GraphStage[FanI
           if (tokens == 0 || nextElementTooExpensive) completeStage()
           tokensCompleted = true
         }
-      }
-    )
+      })
 
-    setHandler(out, new OutHandler {
-      override def onPull(): Unit = maybeEmit()
-    })
+    setHandler(out,
+      new OutHandler {
+        override def onPull(): Unit = maybeEmit()
+      })
   }
 }

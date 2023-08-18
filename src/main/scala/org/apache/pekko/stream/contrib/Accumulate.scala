@@ -5,8 +5,8 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.japi.function
-import org.apache.pekko.stream.{Attributes, FlowShape, Inlet, Outlet}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import org.apache.pekko.stream.{ Attributes, FlowShape, Inlet, Outlet }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
 
 /**
  * This companion defines a factory for [[Accumulate]] instances, see [[Accumulate.apply]].
@@ -57,15 +57,17 @@ final class Accumulate[A, B] private (zero: B)(f: (B, A) => B) extends GraphStag
 
     private var acc = zero
 
-    setHandler(in, new InHandler {
-      override def onPush() = {
-        acc = f(acc, grab(in))
-        push(out, acc)
-      }
-    })
+    setHandler(in,
+      new InHandler {
+        override def onPush() = {
+          acc = f(acc, grab(in))
+          push(out, acc)
+        }
+      })
 
-    setHandler(out, new OutHandler {
-      override def onPull() = pull(in)
-    })
+    setHandler(out,
+      new OutHandler {
+        override def onPull() = pull(in)
+      })
   }
 }

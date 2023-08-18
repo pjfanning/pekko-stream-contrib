@@ -5,8 +5,8 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.japi.function
-import org.apache.pekko.stream.stage.{GraphStage, InHandler, OutHandler, TimerGraphStageLogic}
-import org.apache.pekko.stream.{Attributes, FlowShape, Inlet, Outlet}
+import org.apache.pekko.stream.stage.{ GraphStage, InHandler, OutHandler, TimerGraphStageLogic }
+import org.apache.pekko.stream.{ Attributes, FlowShape, Inlet, Outlet }
 
 import scala.collection.immutable
 import scala.concurrent.duration.FiniteDuration
@@ -24,8 +24,8 @@ object AccumulateWhileUnchanged {
    * @return [[AccumulateWhileUnchanged]] instance
    */
   def apply[Element, Property](propertyExtractor: Element => Property,
-                               maxElements: Option[Int] = None,
-                               maxDuration: Option[FiniteDuration] = None) =
+      maxElements: Option[Int] = None,
+      maxDuration: Option[FiniteDuration] = None) =
     new AccumulateWhileUnchanged(propertyExtractor, maxElements, maxDuration)
 
   /**
@@ -39,8 +39,8 @@ object AccumulateWhileUnchanged {
    * @return [[AccumulateWhileUnchanged]] instance
    */
   def create[Element, Property](propertyExtractor: function.Function[Element, Property],
-                                maxElements: Option[Int] = None,
-                                maxDuration: Option[FiniteDuration] = None) =
+      maxElements: Option[Int] = None,
+      maxDuration: Option[FiniteDuration] = None) =
     new AccumulateWhileUnchanged(propertyExtractor.apply, maxElements, maxDuration)
 }
 
@@ -55,8 +55,8 @@ object AccumulateWhileUnchanged {
  * @tparam Property type of the observed property
  */
 final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Element => Property,
-                                                        maxElements: Option[Int] = None,
-                                                        maxDuration: Option[FiniteDuration] = None)
+    maxElements: Option[Int] = None,
+    maxDuration: Option[FiniteDuration] = None)
     extends GraphStage[FlowShape[Element, immutable.Seq[Element]]] {
 
   val in = Inlet[Element]("AccumulateWhileUnchanged.in")
@@ -83,9 +83,9 @@ final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Eleme
           if (currentState.isEmpty) currentState = Some(nextState)
 
           (currentState, maxElements) match {
-            case (Some(`nextState`), None) => stash(nextElement)
+            case (Some(`nextState`), None)                          => stash(nextElement)
             case (Some(`nextState`), Some(max)) if nbElements < max => stash(nextElement)
-            case _ => pushResults(Some(nextElement), Some(nextState))
+            case _                                                  => pushResults(Some(nextElement), Some(nextState))
           }
         }
 
@@ -109,14 +109,13 @@ final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Eleme
           nbElements += 1
           if (downstreamWaiting) pull(in)
         }
-      }
-    )
+      })
 
     override def preStart(): Unit = {
       super.preStart()
       maxDuration match {
         case Some(max) => schedulePeriodically(None, max)
-        case None => ()
+        case None      => ()
       }
     }
     override def postStop(): Unit =

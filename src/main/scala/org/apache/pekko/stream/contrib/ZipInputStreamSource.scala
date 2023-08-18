@@ -4,18 +4,18 @@
 
 package org.apache.pekko.stream.contrib
 
-import java.util.zip.{ZipEntry, ZipInputStream}
-import org.apache.pekko.stream.Attributes.{name, InputBuffer}
+import java.util.zip.{ ZipEntry, ZipInputStream }
+import org.apache.pekko.stream.Attributes.{ name, InputBuffer }
 import ZipInputStreamSource.ZipEntryData
 import org.apache.pekko.stream.impl.Stages.DefaultAttributes.IODispatcher
 import org.apache.pekko.stream.scaladsl.Source
-import org.apache.pekko.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, OutHandler}
-import org.apache.pekko.stream.{Attributes, Outlet, SourceShape}
+import org.apache.pekko.stream.stage.{ GraphStageLogic, GraphStageWithMaterializedValue, OutHandler }
+import org.apache.pekko.stream.{ Attributes, Outlet, SourceShape }
 import org.apache.pekko.util.ByteString
 import org.apache.pekko.util.ByteString.ByteString1C
 import scala.annotation.tailrec
 import scala.collection.immutable
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ Future, Promise }
 import scala.util.control.NonFatal
 
 /**
@@ -49,8 +49,8 @@ object ZipInputStreamSource {
   def apply(
       in: () => ZipInputStream,
       chunkSize: Int = DefaultChunkSize,
-      allowedZipExtensions: immutable.Seq[String] = DefaultAllowedZipExtensions
-  ): Source[(ZipEntryData, ByteString), Future[Long]] =
+      allowedZipExtensions: immutable.Seq[String] = DefaultAllowedZipExtensions)
+      : Source[(ZipEntryData, ByteString), Future[Long]] =
     Source
       .fromGraph(new ZipInputStreamSource(in, chunkSize, allowedZipExtensions))
       .withAttributes(name("zipInputStreamSource") and IODispatcher)
@@ -68,8 +68,8 @@ object ZipInputStreamSource {
   def create(
       in: Function0[ZipInputStream],
       chunkSize: Int = DefaultChunkSize,
-      allowedZipExtensions: immutable.Seq[String] = DefaultAllowedZipExtensions
-  ): Source[(ZipEntryData, ByteString), Future[Long]] =
+      allowedZipExtensions: immutable.Seq[String] = DefaultAllowedZipExtensions)
+      : Source[(ZipEntryData, ByteString), Future[Long]] =
     Source
       .fromGraph(new ZipInputStreamSource(in, chunkSize, allowedZipExtensions))
       .withAttributes(name("zipInputStreamSource") and IODispatcher)
@@ -87,8 +87,8 @@ object ZipInputStreamSource {
  * @param chunkSize the size of the chunks
  */
 final class ZipInputStreamSource private (in: () => ZipInputStream,
-                                          chunkSize: Int,
-                                          allowedZipExtensions: immutable.Seq[String])
+    chunkSize: Int,
+    allowedZipExtensions: immutable.Seq[String])
     extends GraphStageWithMaterializedValue[SourceShape[(ZipEntryData, ByteString)], Future[Long]] {
 
   val matValue = Promise[Long]()
@@ -163,8 +163,7 @@ final class ZipInputStreamSource private (in: () => ZipInputStream,
               matValue.success(readBytesTotal)
               super.onDownstreamFinish()
             }
-        }
-      ) // end of handler
+        }) // end of handler
 
       @tailrec private def nextEntry(streams: Seq[ZipInputStream]): (Option[ZipEntry], Seq[ZipInputStream]) =
         streams match {

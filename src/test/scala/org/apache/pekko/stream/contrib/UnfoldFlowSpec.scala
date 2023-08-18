@@ -6,8 +6,8 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.scaladsl._
 import org.apache.pekko.stream.OverflowStrategy
-import org.apache.pekko.stream.testkit.{TestPublisher, TestSubscriber}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 import scala.concurrent.duration.DurationInt
 import org.apache.pekko.util.Timeout
 
@@ -31,14 +31,13 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         val source = SourceGen.unfoldFlow(27)(
           Flow
             .fromFunction[Int, (Int, Int)] {
-              case 1 => throw done
+              case 1               => throw done
               case n if n % 2 == 0 => (n / 2, n)
-              case n => (n * 3 + 1, n)
+              case n               => (n * 3 + 1, n)
             }
             .recover {
               case `done` => (1, 1)
-            }
-        )
+            })
 
         val sink = source.runWith(TestSink.probe)
 
@@ -57,15 +56,14 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           SourceGen.unfoldFlow(27)(
             Flow
               .fromFunction[Int, (Int, Int)] {
-                case 1 => throw done
+                case 1               => throw done
                 case n if n % 2 == 0 => (n / 2, n)
-                case n => (n * 3 + 1, n)
+                case n               => (n * 3 + 1, n)
               }
               .recover {
                 case `done` => (1, 1)
               }
-              .buffer(buffSize, OverflowStrategy.backpressure)
-          )
+              .buffer(buffSize, OverflowStrategy.backpressure))
 
         val sink = bufferedSource(10).runWith(TestSink.probe)
 
@@ -79,9 +77,9 @@ class UnfoldFlowSpec extends BaseStreamSpec {
       "with function" in {
 
         val source = SourceGen.unfoldFlowWith(27, Flow.fromFunction(identity[Int])) {
-          case 1 => None
+          case 1               => None
           case n if n % 2 == 0 => Some((n / 2, n))
-          case n => Some((n * 3 + 1, n))
+          case n               => Some((n * 3 + 1, n))
         }
 
         val sink = source.runWith(TestSink.probe)
@@ -103,8 +101,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         type PProbe = TestPublisher.Probe[(Int, Int)]
         val controlledFlow = Flow.fromSinkAndSourceMat[Int, (Int, Int), SProbe, PProbe, (SProbe, PProbe)](
           TestSink.probe[Int],
-          TestSource.probe[(Int, Int)]
-        )(Keep.both)
+          TestSource.probe[(Int, Int)])(Keep.both)
         val source = SourceGen.unfoldFlow(1)(controlledFlow)
 
         "fail instantly when aborted" in {
@@ -219,7 +216,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         type PProbe = TestPublisher.Probe[Int]
         val controlledFlow =
           Flow.fromSinkAndSourceMat[Int, Int, SProbe, PProbe, (SProbe, PProbe)](TestSink.probe[Int],
-                                                                                TestSource.probe[Int])(Keep.both)
+            TestSource.probe[Int])(Keep.both)
         val source = SourceGen.unfoldFlowWith(1, controlledFlow) { n =>
           Some((n + 1, n))
         }

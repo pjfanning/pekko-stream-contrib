@@ -4,12 +4,12 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Flow, Sink, Source}
+import org.apache.pekko.stream.scaladsl.{ Flow, Sink, Source }
 import org.apache.pekko.stream.testkit.TestSubscriber
 import org.apache.pekko.testkit.TestProbe
-import org.reactivestreams.{Publisher, Subscriber}
+import org.reactivestreams.{ Publisher, Subscriber }
 
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.{ Duration, FiniteDuration }
 
 class TimedSpec extends BaseStreamSpec {
 
@@ -31,7 +31,7 @@ class TimedSpec extends BaseStreamSpec {
       val source = Source(1 to n).timedIntervalBetween(_ % measureBetweenEvery == 0, printInfo)
 
       source.runWith(Sink.ignore)
-      (1 until n / measureBetweenEvery) foreach { _ =>
+      (1 until n / measureBetweenEvery).foreach { _ =>
         testActor.expectMsgType[FiniteDuration]
       }
     }
@@ -95,7 +95,7 @@ class TimedSpec extends BaseStreamSpec {
 
       val s = c1.expectSubscription()
       s.request(200)
-      0 to 100 foreach { i =>
+      (0 to 100).foreach { i =>
         c1.expectNext(i.toString + "!")
       }
       c1.expectComplete()

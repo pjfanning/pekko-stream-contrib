@@ -9,7 +9,7 @@ import org.apache.pekko.japi.function
 import org.apache.pekko.stream.scaladsl.Source
 
 import scala.collection.immutable
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * Defines a factory for PagedSource.
@@ -18,7 +18,6 @@ import scala.concurrent.{ExecutionContext, Future}
  * PagesSource is a Source streaming items from a paged API.
  * The paged API is accessed with a page key and returns data.
  * This data contain a list of items and optional information about the key of the next page.
- *
  */
 object PagedSource {
 
@@ -42,11 +41,11 @@ object PagedSource {
       Source.unfoldAsync[Option[K], Page[T, K]](Some(firstKey)) { key =>
         val pageFuture: Future[Page[T, K]] = key match {
           case Some(k) => f(k)
-          case None => Future.successful(Page(immutable.Seq.empty, None))
+          case None    => Future.successful(Page(immutable.Seq.empty, None))
         }
         pageFuture.map {
           case nonEmptyPage @ Page(items, nextKey) if items.nonEmpty => Some(nextKey -> nonEmptyPage)
-          case _ => None
+          case _                                                     => None
         }
       }
     pageSource.flatMapConcat(page => Source(page.items))
@@ -65,8 +64,8 @@ object PagedSource {
    * @return [[PagedSource]] instance
    */
   def create[T, K](firstKey: K,
-                   f: function.Function[K, Future[Page[T, K]]],
-                   executor: ExecutionContext): PagedSource[T] =
+      f: function.Function[K, Future[Page[T, K]]],
+      executor: ExecutionContext): PagedSource[T] =
     PagedSource[T, K](firstKey)(f.apply)(executor)
 
 }

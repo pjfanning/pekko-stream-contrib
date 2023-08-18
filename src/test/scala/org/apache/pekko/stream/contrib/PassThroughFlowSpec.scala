@@ -5,7 +5,7 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.NotUsed
-import org.apache.pekko.stream.scaladsl.{Flow, Keep, Source}
+import org.apache.pekko.stream.scaladsl.{ Flow, Keep, Source }
 import org.apache.pekko.stream.testkit.TestSubscriber
 import org.apache.pekko.stream.testkit.scaladsl.TestSink
 

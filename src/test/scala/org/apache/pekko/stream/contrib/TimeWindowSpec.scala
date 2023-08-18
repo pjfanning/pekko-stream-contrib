@@ -9,14 +9,14 @@ import java.util.concurrent.ThreadFactory
 import org.apache.pekko.event.LoggingAdapter
 import org.apache.pekko.stream.scaladsl.Source
 import org.apache.pekko.stream.testkit.scaladsl.TestSink
-import com.github.pjfanning.pekko.scheduler.mock.{MockScheduler, VirtualTime}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.github.pjfanning.pekko.scheduler.mock.{ MockScheduler, VirtualTime }
+import com.typesafe.config.{ Config, ConfigFactory }
 
 import scala.concurrent.duration._
 
 class PekkoMockScheduler extends {
-  val time = new VirtualTime
-} with MockScheduler(time) {
+      val time = new VirtualTime
+    } with MockScheduler(time) {
   def this(config: Config, adapter: LoggingAdapter, tf: ThreadFactory) = this()
 }
 

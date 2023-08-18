@@ -74,35 +74,30 @@ class DelayFlowSpec extends BaseStreamSpec {
       val probe = Source(elems)
         .map(e => (e, System.nanoTime()))
         .via(
-          DelayFlow[(Int, Long)](
-            () =>
-              DelayStrategy
-                .linearIncreasingDelay(step, incWhile, initial, max)
-          )
-        )
+          DelayFlow[(Int, Long)](() =>
+            DelayStrategy
+              .linearIncreasingDelay(step, incWhile, initial, max)))
         .map(start => System.nanoTime() - start._2)
         .runWith(TestSink.probe)
 
-      elems.foreach(
-        e =>
-          if (incWhile((e, 1L))) {
-            val afterIncrease = initial + e * step
-            val delay = if (afterIncrease < max) {
-              afterIncrease
-            } else {
-              max
-            }
-            val next = probe
-              .request(1)
-              .expectNext(delay + delay.dilated)
-            next should be >= delay.toNanos
+      elems.foreach(e =>
+        if (incWhile((e, 1L))) {
+          val afterIncrease = initial + e * step
+          val delay = if (afterIncrease < max) {
+            afterIncrease
           } else {
-            val next = probe
-              .request(1)
-              .expectNext(initial + initial.dilated)
-            next should be >= initial.toNanos
-        }
-      )
+            max
+          }
+          val next = probe
+            .request(1)
+            .expectNext(delay + delay.dilated)
+          next should be >= delay.toNanos
+        } else {
+          val next = probe
+            .request(1)
+            .expectNext(initial + initial.dilated)
+          next should be >= initial.toNanos
+        })
 
       probe.expectComplete()
 

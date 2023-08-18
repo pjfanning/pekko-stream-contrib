@@ -4,9 +4,9 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.{Attributes, OverflowStrategy}
-import org.apache.pekko.stream.scaladsl.{Flow, Keep, Source}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.{ Attributes, OverflowStrategy }
+import org.apache.pekko.stream.scaladsl.{ Flow, Keep, Source }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 import scala.concurrent.duration._
 
 class FeedbackLoopSpec extends BaseStreamSpec {

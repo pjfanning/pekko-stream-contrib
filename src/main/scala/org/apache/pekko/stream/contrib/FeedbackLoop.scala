@@ -4,9 +4,9 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Flow, GraphDSL, Keep, MergePreferred}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
-import org.apache.pekko.stream.{Attributes, FanOutShape2, FlowShape, Graph, Inlet, Outlet, OverflowStrategy}
+import org.apache.pekko.stream.scaladsl.{ Flow, GraphDSL, Keep, MergePreferred }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
+import org.apache.pekko.stream.{ Attributes, FanOutShape2, FlowShape, Graph, Inlet, Outlet, OverflowStrategy }
 
 object FeedbackLoop {
 
@@ -16,8 +16,8 @@ object FeedbackLoop {
    * the `feedbackArc` are buffered and the resulting flow fails if that buffer overflows.
    */
   def apply[I, O0, O, M1, M2, M](forwardFlow: Graph[FanOutShape2[I, O0, O], M1],
-                                 feedbackArc: Graph[FlowShape[O0, I], M2],
-                                 feedbackBufferSize: Int)(combineMat: (M1, M2) => M): Flow[I, O, M] =
+      feedbackArc: Graph[FlowShape[O0, I], M2],
+      feedbackBufferSize: Int)(combineMat: (M1, M2) => M): Flow[I, O, M] =
     Flow.fromGraph(GraphDSL.create(forwardFlow, feedbackArc)(combineMat) { implicit builder => (fw, fb) =>
       {
         import GraphDSL.Implicits._
@@ -40,7 +40,7 @@ object FeedbackLoop {
   object Implicits {
     implicit class FanOut2Ops[I, O0, O, M1](val fanOut: Graph[FanOutShape2[I, O0, O], M1]) extends AnyVal {
       def feedbackViaMat[M2, M](feedbackArc: Graph[FlowShape[O0, I], M2],
-                                feedbackBufferSize: Int)(combineMat: (M1, M2) => M): Flow[I, O, M] =
+          feedbackBufferSize: Int)(combineMat: (M1, M2) => M): Flow[I, O, M] =
         FeedbackLoop(fanOut, feedbackArc, feedbackBufferSize)(combineMat)
 
       def feedbackVia[M2](feedbackArc: Graph[FlowShape[O0, I], M2], feedbackBufferSize: Int): Flow[I, O, M1] =
@@ -75,19 +75,19 @@ object FeedbackLoop {
                 pull(shape.in)
               }
             }
-          }
-        )
+          })
 
-        setHandler(shape.in, new InHandler {
-          def onPush(): Unit = {
-            val elem = grab(shape.in)
-            if (downstreamFinished) {
-              pull(shape.in)
-            } else {
-              push(shape.out, elem)
+        setHandler(shape.in,
+          new InHandler {
+            def onPush(): Unit = {
+              val elem = grab(shape.in)
+              if (downstreamFinished) {
+                pull(shape.in)
+              } else {
+                push(shape.out, elem)
+              }
             }
-          }
-        })
+          })
       }
     }
 }

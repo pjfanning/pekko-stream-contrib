@@ -4,8 +4,8 @@
 
 package org.apache.pekko.stream.contrib
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import java.util.zip.{ZipEntry, ZipInputStream, ZipOutputStream}
+import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
+import java.util.zip.{ ZipEntry, ZipInputStream, ZipOutputStream }
 import org.apache.pekko.stream.scaladsl.Keep
 import org.apache.pekko.stream.testkit.scaladsl.TestSink
 import org.apache.pekko.testkit.TestDuration

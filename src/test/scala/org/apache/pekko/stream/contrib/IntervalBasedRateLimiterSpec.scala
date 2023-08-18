@@ -7,7 +7,7 @@ package org.apache.pekko.stream.contrib
 import org.apache.pekko.NotUsed
 import org.apache.pekko.stream.ThrottleMode
 import org.apache.pekko.stream.scaladsl.Source
-import org.apache.pekko.stream.testkit.TestSubscriber.{OnComplete, OnNext}
+import org.apache.pekko.stream.testkit.TestSubscriber.{ OnComplete, OnNext }
 import org.apache.pekko.stream.testkit.scaladsl.TestSink
 import org.scalatest.matchers.should.Matchers
 
@@ -18,44 +18,44 @@ class IntervalBasedRateLimiterSpec extends IntervalBasedThrottlerTestKit {
   "IntervalBasedRateLimiter" should {
     "limit rate of messages" when {
       "frequency is low (1 element per 500ms)" in testCase(source = infiniteSource,
-                                                           numOfElements = 6,
-                                                           maxBatchSize = 1,
-                                                           minInterval = 500.millis)
+        numOfElements = 6,
+        maxBatchSize = 1,
+        minInterval = 500.millis)
 
       "frequency is medium (10 elements per 100ms)" in testCase(source = infiniteSource,
-                                                                numOfElements = 300,
-                                                                maxBatchSize = 10,
-                                                                minInterval = 100.millis)
+        numOfElements = 300,
+        maxBatchSize = 10,
+        minInterval = 100.millis)
 
       "frequency is moderate (20 elements per 100ms)" in testCase(source = infiniteSource,
-                                                                  numOfElements = 600,
-                                                                  maxBatchSize = 20,
-                                                                  minInterval = 100.millis)
+        numOfElements = 600,
+        maxBatchSize = 20,
+        minInterval = 100.millis)
 
       "frequency is moderate (200 elements per 1000ms)" in testCase(source = infiniteSource,
-                                                                    numOfElements = 600,
-                                                                    maxBatchSize = 200,
-                                                                    minInterval = 1000.millis)
+        numOfElements = 600,
+        maxBatchSize = 200,
+        minInterval = 1000.millis)
 
       "frequency is high (200 elements per 100ms)" in testCase(source = infiniteSource,
-                                                               numOfElements = 6000,
-                                                               maxBatchSize = 200,
-                                                               minInterval = 100.millis)
+        numOfElements = 6000,
+        maxBatchSize = 200,
+        minInterval = 100.millis)
 
       "frequency is high (2 000 elements per 1 000ms)" in testCase(source = infiniteSource,
-                                                                   numOfElements = 6000,
-                                                                   maxBatchSize = 2000,
-                                                                   minInterval = 1000.millis)
+        numOfElements = 6000,
+        maxBatchSize = 2000,
+        minInterval = 1000.millis)
 
       "frequency is very high (50 000 elements per 1 000ms)" in testCase(source = infiniteSource,
-                                                                         numOfElements = 150000,
-                                                                         maxBatchSize = 50000,
-                                                                         minInterval = 1000.millis)
+        numOfElements = 150000,
+        maxBatchSize = 50000,
+        minInterval = 1000.millis)
 
       "source is slow" in testCase(source = slowInfiniteSource(300.millis),
-                                   numOfElements = 10,
-                                   maxBatchSize = 1,
-                                   minInterval = 100.millis)
+        numOfElements = 10,
+        maxBatchSize = 1,
+        minInterval = 100.millis)
     }
   }
 
@@ -103,7 +103,7 @@ trait IntervalBasedThrottlerTestKit extends BaseStreamSpec {
     }
 
     batches.flatten should contain theSameElementsInOrderAs (1 to numOfElements).inclusive
-    batches.size should (be(numOfElements / maxBatchSize) or be(numOfElements / maxBatchSize + 1))
+    batches.size should (be(numOfElements / maxBatchSize).or(be(numOfElements / maxBatchSize + 1)))
   }
 
   protected def infiniteSource: Source[Int, NotUsed] = Source(Stream.from(1, 1))

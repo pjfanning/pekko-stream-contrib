@@ -8,16 +8,16 @@ import java.time.Clock
 import java.time.temporal.ChronoUnit
 import org.apache.pekko.actor.ActorSystem
 import LatencyTimer.TimedResult
-import org.apache.pekko.stream.scaladsl.{Flow, Keep, Sink}
+import org.apache.pekko.stream.scaladsl.{ Flow, Keep, Sink }
 import org.apache.pekko.stream.testkit.scaladsl.TestSource
-import org.apache.pekko.stream.{ActorAttributes, Supervision}
+import org.apache.pekko.stream.{ ActorAttributes, Supervision }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{GivenWhenThen, OptionValues}
+import org.scalatest.{ GivenWhenThen, OptionValues }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContextExecutor}
+import scala.concurrent.{ Await, ExecutionContextExecutor }
 import Implicits._
 import org.apache.pekko.stream.contrib.LatencyTimer.TimedResult
 
@@ -27,7 +27,6 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   /**
-   *
    */
   Scenario("LatencyTimer measures time correct and continues with the wrapped flow") {
     val clockMock = mock[Clock]
@@ -42,8 +41,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
     }
     val measuredFlow = LatencyTimer.createGraph(
       testFlow,
-      Sink.foreach[TimedResult[String]](x => timerResult = x.measuredTime)
-    )(clockMock)
+      Sink.foreach[TimedResult[String]](x => timerResult = x.measuredTime))(clockMock)
 
     (clockMock.instant _).expects().returns(baseInstant)
     (clockMock.instant _).expects().returns(baseInstant.plus(TimePassed.length, ChronoUnit.MILLIS))
@@ -62,7 +60,6 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
   }
 
   /**
-   *
    */
   Scenario("LatencyTimer handles diverting Flows") {
     val clockMock = mock[Clock]
@@ -81,8 +78,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
       .divertTo(Sink.ignore, i => i == 2)
     val measuredFlow = LatencyTimer.createGraph(
       divertingTestFlow,
-      Sink.foreach[TimedResult[Int]](x => timerResult = x.measuredTime)
-    )(clockMock)
+      Sink.foreach[TimedResult[Int]](x => timerResult = x.measuredTime))(clockMock)
 
     // first element
     (clockMock.instant _).expects().returns(baseInstant)

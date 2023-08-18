@@ -4,14 +4,14 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.{Attributes, FanOutShape2}
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, OutHandler}
+import org.apache.pekko.stream.{ Attributes, FanOutShape2 }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, OutHandler }
 import org.apache.pekko.util.Timeout
 
 /** INTERNAL API */
 private[pekko] abstract class UnfoldFlowGraphStageLogic[O, S, E] private[stream] (shape: FanOutShape2[O, S, E],
-                                                                                  seed: S,
-                                                                                  timeout: Timeout)
+    seed: S,
+    timeout: Timeout)
     extends GraphStageLogic(shape) {
 
   val feedback = shape.out0
@@ -41,15 +41,11 @@ private[pekko] abstract class UnfoldFlowGraphStageLogic[O, S, E] private[stream]
                 if (!isClosed(nextElem)) {
                   failStage(
                     new IllegalStateException(
-                      s"unfoldFlow source's inner flow canceled only upstream, while downstream remain available for $timeout"
-                    )
-                  )
+                      s"unfoldFlow source's inner flow canceled only upstream, while downstream remain available for $timeout"))
                 }
               }.invoke(())
-          }
-        )
-    }
-  )
+          })
+    })
 
   setHandler(
     output,
@@ -62,14 +58,13 @@ private[pekko] abstract class UnfoldFlowGraphStageLogic[O, S, E] private[stream]
           pushedToCycle = true
         }
       }
-    }
-  )
+    })
 }
 
 /** INTERNAL API */
 private[pekko] class FanOut2unfoldingStage[O, S, E] private[stream] (
-    generateGraphStageLogic: FanOutShape2[O, S, E] => UnfoldFlowGraphStageLogic[O, S, E]
-) extends GraphStage[FanOutShape2[O, S, E]] {
+    generateGraphStageLogic: FanOutShape2[O, S, E] => UnfoldFlowGraphStageLogic[O, S, E])
+    extends GraphStage[FanOutShape2[O, S, E]] {
   override val shape = new FanOutShape2[O, S, E]("unfoldFlow")
   override def createLogic(attributes: Attributes) = generateGraphStageLogic(shape)
 }

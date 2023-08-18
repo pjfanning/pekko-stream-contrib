@@ -5,10 +5,10 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.impl.Stages.DefaultAttributes
-import org.apache.pekko.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
-import org.apache.pekko.stream.{Attributes, Inlet, Outlet, UniformFanInShape}
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler }
+import org.apache.pekko.stream.{ Attributes, Inlet, Outlet, UniformFanInShape }
 
-import scala.collection.{immutable, mutable}
+import scala.collection.{ immutable, mutable }
 
 /**
  * Merges multiple incoming inputs based on a total ordering extracted from the elements.
@@ -139,8 +139,7 @@ final class MergeByIndex[T](val inputPorts: Int, index: T => Long) extends Graph
     private def verifyElementIndex(elemIndex: Long, in: Inlet[T]): Unit =
       if (elemIndex < expectedIndex)
         throw new IllegalArgumentException(
-          s"Index sequence is non-monotonic: element received from ${in.s} with index $elemIndex has smaller than currently expected index $expectedIndex"
-        )
+          s"Index sequence is non-monotonic: element received from ${in.s} with index $elemIndex has smaller than currently expected index $expectedIndex")
 
     {
       var ix = 0
@@ -169,9 +168,10 @@ final class MergeByIndex[T](val inputPorts: Int, index: T => Long) extends Graph
       }
     }
 
-    setHandler(out, new OutHandler {
-      override def onPull(): Unit = maybeEmit()
-    })
+    setHandler(out,
+      new OutHandler {
+        override def onPull(): Unit = maybeEmit()
+      })
   }
 
   override def toString = "MergeByIndex"

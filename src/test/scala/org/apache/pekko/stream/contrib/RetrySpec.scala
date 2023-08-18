@@ -6,17 +6,17 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.KillSwitches
 import org.apache.pekko.stream.scaladsl._
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 
 import scala.concurrent.duration._
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 class RetrySpec extends BaseStreamSpec {
 
   val failedElem: Try[Int] = Failure(new Exception("cooked failure"))
   def flow[T] = Flow.fromFunction[(Int, T), (Try[Int], T)] {
     case (i, j) if i % 2 == 0 => (failedElem, j)
-    case (i, j) => (Success(i + 1), j)
+    case (i, j)               => (Success(i + 1), j)
   }
 
   "Retry" should {
@@ -48,7 +48,7 @@ class RetrySpec extends BaseStreamSpec {
         .map(i => (i, (i to 0 by -2).toList ::: List(i + 1)))
         .via(Retry(flow[List[Int]]) {
           case x :: xs => Some(x -> xs)
-          case Nil => throw new IllegalStateException("should not happen")
+          case Nil     => throw new IllegalStateException("should not happen")
         })
         .toMat(TestSink.probe)(Keep.both)
         .run()
@@ -231,8 +231,8 @@ class RetrySpec extends BaseStreamSpec {
         .probe[Int]
         .map(i => (i, i))
         .viaMat(
-          Retry(alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc)
-        )(Keep.both)
+          Retry(alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc))(
+          Keep.both)
         .toMat(TestSink.probe)(Keep.both)
         .run()
 
@@ -480,9 +480,9 @@ class RetrySpec extends BaseStreamSpec {
         .map(i => (i, i))
         .viaMat(
           Retry.concat(Long.MaxValue,
-                       Long.MaxValue,
-                       alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc)
-        )(Keep.both)
+            Long.MaxValue,
+            alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc))(
+          Keep.both)
         .toMat(TestSink.probe)(Keep.both)
         .run()
 

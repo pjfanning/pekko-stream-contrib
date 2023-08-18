@@ -4,11 +4,11 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
+import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.pekko.stream.testkit.scaladsl.TestSink
 import org.apache.pekko.testkit.TestDuration
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 class LastElementSpec extends BaseStreamSpec {
 

@@ -4,8 +4,8 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 import org.apache.pekko.testkit.TestDuration
 import org.scalatest.concurrent.ScalaFutures
 

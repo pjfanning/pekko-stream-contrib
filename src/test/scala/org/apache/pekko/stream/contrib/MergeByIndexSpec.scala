@@ -6,9 +6,9 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.NotUsed
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.scaladsl.{Flow, GraphDSL, Partition, RunnableGraph, Sink, Source}
-import org.apache.pekko.stream.testkit.{TestPublisher, TestSubscriber}
-import org.apache.pekko.stream.{ActorMaterializer, ClosedShape, FlowShape, OverflowStrategy}
+import org.apache.pekko.stream.scaladsl.{ Flow, GraphDSL, Partition, RunnableGraph, Sink, Source }
+import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
+import org.apache.pekko.stream.{ ActorMaterializer, ClosedShape, FlowShape, OverflowStrategy }
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

@@ -6,10 +6,10 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.pattern.after
-import org.apache.pekko.stream.{ActorMaterializer, StreamDetachedException}
-import SwitchMode.{Close, Open}
-import org.apache.pekko.stream.contrib.SwitchMode.{Close, Open}
-import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
+import org.apache.pekko.stream.{ ActorMaterializer, StreamDetachedException }
+import SwitchMode.{ Close, Open }
+import org.apache.pekko.stream.contrib.SwitchMode.{ Close, Open }
+import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.pekko.stream.testkit.scaladsl._
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.concurrent.ScalaFutures
@@ -39,7 +39,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
           switch.flip(Open)
         }.futureValue shouldBe true
 
-        seq.futureValue should contain inOrder (1, 2, 3)
+        (seq.futureValue should contain).inOrder(1, 2, 3)
       }
     }
 

@@ -4,8 +4,8 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Keep, Source}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.scaladsl.{ Keep, Source }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 
 import scala.collection.immutable
 import scala.collection.immutable.Seq

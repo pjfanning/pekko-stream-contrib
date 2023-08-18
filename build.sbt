@@ -6,8 +6,8 @@ scalaVersion := crossScalaVersions.value.head
 
 val PekkoVersion = "1.0.1"
 
-resolvers += "Sonatype Staging" at
-  "https://oss.sonatype.org/content/repositories/staging"
+resolvers += "Sonatype Staging".at(
+  "https://oss.sonatype.org/content/repositories/staging")
 
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
@@ -23,30 +23,28 @@ libraryDependencies ++= Seq(
 homepage := Some(url("https://github.com/pjfanning/pekko-stream-contrib"))
 licenses := Seq(("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
 scmInfo := Some(
-  ScmInfo(url("https://github.com/pjfanning/pekko-stream-contrib"), "git@github.com:pjfanning/pekko-stream-contrib.git")
-)
+  ScmInfo(url("https://github.com/pjfanning/pekko-stream-contrib"),
+    "git@github.com:pjfanning/pekko-stream-contrib.git"))
 developers += Developer("contributors",
-                        "Contributors",
-                        "",
-                        url("https://github.com/pjfanning/pekko-stream-contrib/graphs/contributors"))
+  "Contributors",
+  "",
+  url("https://github.com/pjfanning/pekko-stream-contrib/graphs/contributors"))
 
 scalacOptions ++=
   Seq("-encoding", "UTF-8", "-feature", "-unchecked", "-deprecation", "-Xlint") ++ (
-    if (scalaVersion.value startsWith "2.13.")
+    if (scalaVersion.value.startsWith("2.13."))
       Seq(
         "-Wdead-code",
         "-Wnumeric-widen",
-        "-Xsource:2.14"
-      )
+        "-Xsource:2.14")
     else
       Seq(
-        //"-Xfatal-warnings",
+        // "-Xfatal-warnings",
         "-Xlint",
         "-Yno-adapted-args",
         "-Ywarn-dead-code",
         "-Ywarn-numeric-widen",
-        "-Xfuture"
-      )
+        "-Xfuture")
   )
 
 // By default scalatest futures time out in 150 ms, dilate that to 600ms.

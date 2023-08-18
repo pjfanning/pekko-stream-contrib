@@ -24,7 +24,7 @@ object PagedSourceSpec {
         val indices = key * itemsPerPage until (key + 1) * itemsPerPage
         val filteredIndices = size match {
           case Some(sz) => indices.filter(_ < sz)
-          case None => indices
+          case None     => indices
         }
         PagedSource.Page(filteredIndices.map(_ * 2), Some(key + 1))
       }
@@ -40,9 +40,9 @@ object PagedSourceSpec {
 
   object LinkedIntPages {
     def page(key: String): (List[Int], String) = key match {
-      case "first" => (List(1, 2), "second")
+      case "first"  => (List(1, 2), "second")
       case "second" => (List(3, 4, 5), "")
-      case _ => (List(6), "")
+      case _        => (List(6), "")
     }
   }
 

@@ -36,15 +36,16 @@ object SourceGen {
 
     val generateUnfoldFlowGraphStageLogic = (shape: FanOutShape2[(S, E), S, E]) =>
       new UnfoldFlowGraphStageLogic[(S, E), S, E](shape, seed, timeout) {
-        setHandler(nextElem, new InHandler {
-          override def onPush() = {
-            val (s, e) = grab(nextElem)
-            pending = s
-            push(output, e)
-            pushedToCycle = false
-          }
-        })
-    }
+        setHandler(nextElem,
+          new InHandler {
+            override def onPush() = {
+              val (s, e) = grab(nextElem)
+              pending = s
+              push(output, e)
+              pushedToCycle = false
+            }
+          })
+      }
 
     unfoldFlowGraph(new FanOut2unfoldingStage(generateUnfoldFlowGraphStageLogic), flow)
   }
@@ -68,8 +69,7 @@ object SourceGen {
    * and may result in a deadlock.
    */
   def unfoldFlowWith[E, S, O, M](seed: S, flow: Graph[FlowShape[S, O], M])(
-      unfoldWith: O => Option[(S, E)]
-  )(implicit timeout: Timeout): Source[E, M] = {
+      unfoldWith: O => Option[(S, E)])(implicit timeout: Timeout): Source[E, M] = {
 
     val generateUnfoldFlowGraphStageLogic = (shape: FanOutShape2[O, S, E]) =>
       new UnfoldFlowGraphStageLogic[O, S, E](shape, seed, timeout) {
@@ -87,16 +87,15 @@ object SourceGen {
                 }
               }
             }
-          }
-        )
-    }
+          })
+      }
 
     unfoldFlowGraph(new FanOut2unfoldingStage(generateUnfoldFlowGraphStageLogic), flow)
   }
 
   /** INTERNAL API */
   private[pekko] def unfoldFlowGraph[E, S, O, M](fanOut2Stage: GraphStage[FanOutShape2[O, S, E]],
-                                                 flow: Graph[FlowShape[S, O], M]): Source[E, M] =
+      flow: Graph[FlowShape[S, O], M]): Source[E, M] =
     Source.fromGraph(GraphDSL.create(flow) { implicit b =>
       { f =>
         {

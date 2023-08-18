@@ -6,13 +6,13 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.NotUsed
 import org.apache.pekko.stream.scaladsl._
-import org.apache.pekko.stream.{ClosedShape, FanInShape2, FanOutShape2, FlowShape, Graph}
-import org.apache.pekko.stream.testkit.scaladsl.{TestSink, TestSource}
+import org.apache.pekko.stream.{ ClosedShape, FanInShape2, FanOutShape2, FlowShape, Graph }
+import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 
 class PartitionWithSpec extends BaseStreamSpec {
 
   private def fanOutAndIn[I, X, Y, O, M](fanOutGraph: Graph[FanOutShape2[I, X, Y], M],
-                                         fanInGraph: Graph[FanInShape2[X, Y, O], NotUsed]): Flow[I, O, M] =
+      fanInGraph: Graph[FanInShape2[X, Y, O], NotUsed]): Flow[I, O, M] =
     Flow.fromGraph(GraphDSL.create(fanOutGraph, fanInGraph)(Keep.left) { implicit builder => (fanOut, fanIn) =>
       import GraphDSL.Implicits._
 
@@ -39,7 +39,7 @@ class PartitionWithSpec extends BaseStreamSpec {
 
   val flow = mergeFanOut(PartitionWith[Int, Int, Int] {
     case i if i % 2 == 0 => Left(i / 2)
-    case i => Right(i * 3 - 1)
+    case i               => Right(i * 3 - 1)
   })
 
   "PartitionWith" should {
@@ -88,7 +88,7 @@ class PartitionWithSpec extends BaseStreamSpec {
 
         val pw = b.add(PartitionWith[Int, Int, Int] {
           case i if i % 2 == 0 => Left(i)
-          case i => Right(i)
+          case i               => Right(i)
         })
 
         src.out ~> pw.in
@@ -118,7 +118,7 @@ class PartitionWithSpec extends BaseStreamSpec {
 
         val partition = b.add(PartitionWith[Int, Int, Int](i => if (i % 2 == 0) Left(i) else Right(i)))
 
-        src.out ~> partition.in
+        src.out        ~> partition.in
         partition.out0 ~> snk0.in
         partition.out1 ~> snk1.in
 
@@ -143,7 +143,7 @@ class PartitionWithSpec extends BaseStreamSpec {
         val partition =
           b.add(PartitionWith[Int, Int, Int](i => if (i % 2 == 0) Left(i) else Right(i), eagerCancel = true))
 
-        src.out ~> partition.in
+        src.out        ~> partition.in
         partition.out0 ~> snk0.in
         partition.out1 ~> snk1.in
 

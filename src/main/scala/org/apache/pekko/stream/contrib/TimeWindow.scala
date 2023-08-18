@@ -31,6 +31,6 @@ object TimeWindow {
    * @return flow implementing time-window aggregation
    */
   def apply[A, S](of: FiniteDuration,
-                  eager: Boolean = true)(seed: A => S)(aggregate: (S, A) => S): Flow[A, S, NotUsed] =
+      eager: Boolean = true)(seed: A => S)(aggregate: (S, A) => S): Flow[A, S, NotUsed] =
     Flow[A].conflateWithSeed(seed)(aggregate).via(new Pulse(of, eager))
 }

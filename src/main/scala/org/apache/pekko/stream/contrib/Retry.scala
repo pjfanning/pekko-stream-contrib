@@ -11,7 +11,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.collection.immutable
 import scala.concurrent.duration.Duration
-import scala.util.{Success, Try}
+import scala.util.{ Success, Try }
 
 /**
  * This object defines methods for retry operations.
@@ -40,8 +40,8 @@ object Retry {
    * @tparam M materialized value type
    */
   def apply[I, O, S, M](
-      flow: Graph[FlowShape[(I, S), (Try[O], S)], M]
-  )(retryWith: S => Option[(I, S)]): Graph[FlowShape[(I, S), (Try[O], S)], M] =
+      flow: Graph[FlowShape[(I, S), (Try[O], S)], M])(
+      retryWith: S => Option[(I, S)]): Graph[FlowShape[(I, S), (Try[O], S)], M] =
     GraphDSL.create(flow) { implicit b => origFlow =>
       import GraphDSL.Implicits._
 
@@ -82,8 +82,7 @@ object Retry {
    * @tparam M materialized value type
    */
   def concat[I, O, S, M](retriesLimit: Long, bufferLimit: Long, flow: Graph[FlowShape[(I, S), (Try[O], S)], M])(
-      retryWith: S => Option[immutable.Iterable[(I, S)]]
-  ): Graph[FlowShape[(I, S), (Try[O], S)], M] =
+      retryWith: S => Option[immutable.Iterable[(I, S)]]): Graph[FlowShape[(I, S), (Try[O], S)], M] =
     GraphDSL.create(flow) { implicit b => origFlow =>
       import GraphDSL.Implicits._
 
@@ -118,14 +117,14 @@ object Retry {
           override def onUpstreamFinish() =
             if (!elementInCycle)
               completeStage()
-        }
-      )
+        })
 
-      setHandler(out1, new OutHandler {
-        override def onPull() =
-          if (isAvailable(out2)) pull(in1)
-          else pull(in2)
-      })
+      setHandler(out1,
+        new OutHandler {
+          override def onPull() =
+            if (isAvailable(out2)) pull(in1)
+            else pull(in2)
+        })
 
       setHandler(
         in2,
@@ -144,8 +143,7 @@ object Retry {
                 }
             }
           }
-        }
-      )
+        })
 
       def pushAndCompleteIfLast(elem: (Try[O], S)): Unit = {
         push(out1, elem)
@@ -168,16 +166,15 @@ object Retry {
             }
 
           override def onDownstreamFinish() = {
-            //Do Nothing, intercept completion as downstream
+            // Do Nothing, intercept completion as downstream
           }
-        }
-      )
+        })
     }
   }
 
   private[pekko] class RetryConcatCoordinator[I, S, O](retriesLimit: Long,
-                                                       bufferLimit: Long,
-                                                       retryWith: S => Option[immutable.Iterable[(I, S)]])
+      bufferLimit: Long,
+      retryWith: S => Option[immutable.Iterable[(I, S)]])
       extends GraphStage[BidiShape[(I, S), (Try[O], S), (Try[O], S), (I, S)]] {
     val in1 = Inlet[(I, S)]("RetryConcat.ext.in")
     val out1 = Outlet[(Try[O], S)]("RetryConcat.ext.out")
@@ -208,8 +205,7 @@ object Retry {
               if (queueOut1.isEmpty) completeStage()
               else emitMultiple(out1, queueOut1.iterator, () => completeStage())
             }
-        }
-      )
+        })
 
       setHandler(
         out1,
@@ -218,8 +214,7 @@ object Retry {
             // prioritize pushing queued element if available
             if (queueOut1.isEmpty) pull(in2)
             else push(out1, queueOut1.dequeue())
-        }
-      )
+        })
 
       setHandler(
         in2,
@@ -234,9 +229,7 @@ object Retry {
                     if (xs.size + queueRetries.size > retriesLimit)
                       failStage(
                         new IllegalStateException(
-                          s"Queue limit of $retriesLimit has been exceeded. Trying to append ${xs.size} elements to a queue that has ${queueRetries.size} elements."
-                        )
-                      )
+                          s"Queue limit of $retriesLimit has been exceeded. Trying to append ${xs.size} elements to a queue that has ${queueRetries.size} elements."))
                     else {
                       xs.foreach(queueRetries.enqueue(_))
                       if (queueRetries.isEmpty) {
@@ -254,8 +247,7 @@ object Retry {
                 }
             }
           }
-        }
-      )
+        })
 
       def pushAndCompleteIfLast(elem: (Try[O], S)): Unit = {
         if (isAvailable(out1) && queueOut1.isEmpty) {
@@ -263,9 +255,7 @@ object Retry {
         } else if (queueOut1.size + 1 > bufferLimit) {
           failStage(
             new IllegalStateException(
-              s"Buffer limit of $bufferLimit has been exceeded. Trying to append 1 element to a buffer that has ${queueOut1.size} elements."
-            )
-          )
+              s"Buffer limit of $bufferLimit has been exceeded. Trying to append 1 element to a buffer that has ${queueOut1.size} elements."))
         } else {
           queueOut1.enqueue(elem)
         }
@@ -297,15 +287,11 @@ object Retry {
                     if (!isClosed(in2)) {
                       failStage(
                         new IllegalStateException(
-                          s"inner flow canceled only upstream, while downstream remain available for $timeout"
-                        )
-                      )
+                          s"inner flow canceled only upstream, while downstream remain available for $timeout"))
                     }
                   }.invoke(())
-              }
-            )
-        }
-      )
+              })
+        })
     }
   }
 

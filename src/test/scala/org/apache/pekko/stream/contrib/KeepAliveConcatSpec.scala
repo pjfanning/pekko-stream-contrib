@@ -4,9 +4,9 @@
 
 package org.apache.pekko.stream.contrib
 
-import org.apache.pekko.stream.scaladsl.{Sink, Source}
-import org.apache.pekko.stream.testkit.{TestPublisher, TestSubscriber}
-import org.apache.pekko.stream.{ActorMaterializer, ActorMaterializerSettings}
+import org.apache.pekko.stream.scaladsl.{ Sink, Source }
+import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
+import org.apache.pekko.stream.{ ActorMaterializer, ActorMaterializerSettings }
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -26,23 +26,23 @@ class KeepAliveConcatSpec extends BaseStreamSpec {
     "not emit additional elements if upstream is fast enough" in {
       Await
         .result(sampleSource
-                  .via(KeepAliveConcat(5, 1.second, expand))
-                  .grouped(1000)
-                  .runWith(Sink.head),
-                3.seconds)
+            .via(KeepAliveConcat(5, 1.second, expand))
+            .grouped(1000)
+            .runWith(Sink.head),
+          3.seconds)
         .flatten should ===(1 to 10)
     }
 
     "emit elements periodically after silent periods" in {
       val sourceWithIdleGap = Source((1 to 5).grouped(3).toList) ++
-      Source((6 to 10).grouped(3).toList).initialDelay(2.second)
+        Source((6 to 10).grouped(3).toList).initialDelay(2.second)
 
       Await
         .result(sourceWithIdleGap
-                  .via(KeepAliveConcat(5, 0.6.seconds, expand))
-                  .grouped(1000)
-                  .runWith(Sink.head),
-                3.seconds)
+            .via(KeepAliveConcat(5, 0.6.seconds, expand))
+            .grouped(1000)
+            .runWith(Sink.head),
+          3.seconds)
         .flatten should ===(1 to 10)
     }
 

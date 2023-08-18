@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 import org.apache.pekko.stream.Attributes
 import org.apache.pekko.stream.impl.fusing.GraphStages.SimpleLinearGraphStage
-import org.apache.pekko.stream.scaladsl.{Flow, Source}
+import org.apache.pekko.stream.scaladsl.{ Flow, Source }
 import org.apache.pekko.stream.stage._
 
 import scala.concurrent.duration._
@@ -21,13 +21,11 @@ trait TimedOps {
   import Timed._
 
   /**
-   *
-   *
    * Measures time from receiving the first element and completion events - one for each subscriber of this `Flow`.
    */
   def timed[I, O, Mat, Mat2](source: Source[I, Mat],
-                             measuredOps: Source[I, Mat] => Source[O, Mat2],
-                             onComplete: FiniteDuration => Unit): Source[O, Mat2] = {
+      measuredOps: Source[I, Mat] => Source[O, Mat2],
+      onComplete: FiniteDuration => Unit): Source[O, Mat2] = {
     val ctx = new TimedFlowContext
 
     val startTimed = Flow[I].via(new StartTimed(ctx)).named("startTimed")
@@ -37,13 +35,11 @@ trait TimedOps {
   }
 
   /**
-   *
-   *
    * Measures time from receiving the first element and completion events - one for each subscriber of this `Flow`.
    */
   def timed[I, O, Out, Mat, Mat2](flow: Flow[I, O, Mat],
-                                  measuredOps: Flow[I, O, Mat] => Flow[I, Out, Mat2],
-                                  onComplete: FiniteDuration => Unit): Flow[I, Out, Mat2] = {
+      measuredOps: Flow[I, O, Mat] => Flow[I, Out, Mat2],
+      onComplete: FiniteDuration => Unit): Flow[I, Out, Mat2] = {
     // todo is there any other way to provide this for Flow, without duplicating impl?
     // they do share a super-type (FlowOps), but all operations of FlowOps return path dependant type
     val ctx = new TimedFlowContext
@@ -57,8 +53,6 @@ trait TimedOps {
 }
 
 /**
- *
- *
  * Provides operations needed to implement the `timedIntervalBetween` DSL
  */
 trait TimedIntervalBetweenOps {
@@ -69,8 +63,8 @@ trait TimedIntervalBetweenOps {
    * Measures rolling interval between immediately subsequent `matching(o: O)` elements.
    */
   def timedIntervalBetween[O, Mat](source: Source[O, Mat],
-                                   matching: O => Boolean,
-                                   onInterval: FiniteDuration => Unit): Source[O, Mat] = {
+      matching: O => Boolean,
+      onInterval: FiniteDuration => Unit): Source[O, Mat] = {
     val timedInterval = Flow[O].via(new TimedInterval[O](matching, onInterval)).named("timedInterval")
     source.via(timedInterval)
   }
@@ -79,8 +73,8 @@ trait TimedIntervalBetweenOps {
    * Measures rolling interval between immediately subsequent `matching(o: O)` elements.
    */
   def timedIntervalBetween[I, O, Mat](flow: Flow[I, O, Mat],
-                                      matching: O => Boolean,
-                                      onInterval: FiniteDuration => Unit): Flow[I, O, Mat] = {
+      matching: O => Boolean,
+      onInterval: FiniteDuration => Unit): Flow[I, O, Mat] = {
     val timedInterval = Flow[O].via(new TimedInterval[O](matching, onInterval)).named("timedInterval")
     flow.via(timedInterval)
   }
