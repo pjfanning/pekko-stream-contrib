@@ -10,15 +10,15 @@ import akka.stream.{ActorMaterializer, StreamDetachedException}
 import akka.stream.contrib.SwitchMode.{Close, Open}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.testkit.scaladsl._
-import org.scalatest._
-import org.scalatest.Matchers._
+import org.scalatest.matchers.should.Matchers._
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 import scala.concurrent.duration._
 
-class ValveSpec extends WordSpec with ScalaFutures {
+class ValveSpec extends AnyWordSpec with ScalaFutures {
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
