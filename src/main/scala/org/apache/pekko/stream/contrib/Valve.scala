@@ -8,7 +8,7 @@ import org.apache.pekko.stream.stage.{ GraphStageLogic, GraphStageWithMaterializ
 import org.apache.pekko.stream._
 import SwitchMode.{ Close, Open }
 
-import scala.concurrent.{ Future, Promise }
+import scala.concurrent.{ ExecutionContext, Future, Promise }
 
 /**
  * Pause/ Resume a Flow
@@ -118,7 +118,7 @@ final class Valve[A](mode: SwitchMode) extends GraphStageWithMaterializedValue[F
 
       override def getMode(): Future[SwitchMode] = {
         val promise = Promise[SwitchMode]()
-        implicit val ec = materializer.executionContext
+        implicit val ec: ExecutionContext = materializer.executionContext
         getModeCallback
           .invokeWithFeedback(promise)
           .flatMap(_ => promise.future)
