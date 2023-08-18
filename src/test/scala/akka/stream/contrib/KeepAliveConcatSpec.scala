@@ -16,7 +16,7 @@ class KeepAliveConcatSpec extends BaseStreamSpec {
   val settings = ActorMaterializerSettings(system)
     .withInputBuffer(initialSize = 2, maxSize = 16)
 
-  implicit val materializer = ActorMaterializer(settings)
+  implicit val materializer: ActorMaterializer = ActorMaterializer(settings)
 
   val sampleSource = Source((1 to 10).grouped(3).toVector)
   val expand = (lst: IndexedSeq[Int]) ⇒ lst.toList.map(Vector(_))

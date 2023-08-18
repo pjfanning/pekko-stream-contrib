@@ -1,10 +1,10 @@
-organization := "com.typesafe.akka"
-name := "akka-stream-contrib"
+organization := "com.github.pjfanning"
+name := "pekko-stream-contrib"
 
-crossScalaVersions := Seq("2.13.0")
+crossScalaVersions := Seq("2.13.11", "2.12.18")
 scalaVersion := crossScalaVersions.value.head
 
-val AkkaVersion = "2.6.0"
+val AkkaVersion = "2.6.21"
 
 resolvers += "Akka library repository".at("https://repo.akka.io/maven")
 
@@ -14,22 +14,21 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.12" % Test, // Common Public License 1.0
   "com.novocode" % "junit-interface" % "0.11" % Test, // BSD-like
   "com.google.jimfs" % "jimfs" % "1.1" % Test, // ApacheV2
-  "org.scalatest" %% "scalatest" % "3.1.0" % Test, // ApacheV2
+  "org.scalatest" %% "scalatest" % "3.1.4" % Test, // ApacheV2
   "org.scalamock" %% "scalamock" % "4.4.0" % Test, // ApacheV2
   "com.miguno.akka" %% "akka-mock-scheduler" % "0.5.5" % Test // ApacheV2
 )
 
-organizationName := "Lightbend Inc."
 organizationHomepage := Some(url("http://www.lightbend.com"))
-homepage := Some(url("https://github.com/akka/akka-stream-contrib"))
+homepage := Some(url("https://github.com/pjfanning/pekko-stream-contrib"))
 licenses := Seq(("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
 scmInfo := Some(
-  ScmInfo(url("https://github.com/akka/akka-stream-contrib"), "git@github.com:akka/akka-stream-contrib.git")
+  ScmInfo(url("https://github.com/pjfanning/pekko-stream-contrib"), "git@github.com:pjfanning/pekko-stream-contrib.git")
 )
 developers += Developer("contributors",
                         "Contributors",
-                        "https://gitter.im/akka/dev",
-                        url("https://github.com/akka/akka-stream-contrib/graphs/contributors"))
+                        "",
+                        url("https://github.com/pjfanning/pekko-stream-contrib/graphs/contributors"))
 
 scalacOptions ++=
   Seq("-encoding", "UTF-8", "-feature", "-unchecked", "-deprecation", "-Xlint") ++ (

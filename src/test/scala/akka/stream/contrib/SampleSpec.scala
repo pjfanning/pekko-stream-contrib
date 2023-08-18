@@ -7,15 +7,16 @@ package akka.stream.contrib
 import akka.actor.ActorSystem
 import akka.stream._
 import akka.stream.scaladsl.{Sink, Source}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class SampleSpec extends WordSpec with Matchers {
-  private implicit val system = ActorSystem("SampleTest")
-  private implicit val materializer = ActorMaterializer()
+class SampleSpec extends AnyWordSpec with Matchers {
+  private implicit val system: ActorSystem = ActorSystem("SampleTest")
+  private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   "Sample Stage" should {
     "returns every Nth element in stream" in {

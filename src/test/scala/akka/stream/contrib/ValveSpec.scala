@@ -13,15 +13,16 @@ import akka.stream.testkit.scaladsl._
 import org.scalatest._
 import org.scalatest.Matchers._
 import org.scalatest.concurrent.ScalaFutures
-import scala.language.postfixOps
 
+import scala.concurrent.ExecutionContext
+import scala.language.postfixOps
 import scala.concurrent.duration._
 
 class ValveSpec extends WordSpec with ScalaFutures {
 
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
-  implicit val executionContext = materializer.executionContext
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val executionContext: ExecutionContext = materializer.executionContext
 
   "A closed valve" should {
 

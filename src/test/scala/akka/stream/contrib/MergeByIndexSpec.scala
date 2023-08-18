@@ -17,9 +17,9 @@ import scala.util.Random
 
 //noinspection TypeAnnotation
 class MergeByIndexSpec extends WordSpec with MustMatchers with ScalaFutures {
-  implicit val system = ActorSystem("merge-by-index")
-  implicit val mat = ActorMaterializer()
-  implicit override val patienceConfig = PatienceConfig(5.seconds)
+  implicit val system: ActorSystem = ActorSystem("merge-by-index")
+  implicit val mat: ActorMaterializer = ActorMaterializer()
+  implicit override val patienceConfig: PatienceConfig = PatienceConfig(5.seconds)
 
   "MergeByIndex" should {
 
