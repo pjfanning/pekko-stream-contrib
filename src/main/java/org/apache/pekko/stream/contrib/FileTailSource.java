@@ -29,7 +29,7 @@ import java.nio.file.StandardOpenOption;
  * newly appended data. Like the unix command `tail -f`.
  *
  * Aborting the stage can be done by combining with a [[org.apache.pekko.stream.KillSwitch]]
- * @deprecated since 0.10, use Alpakka's implementation instead https://developer.lightbend.com/docs/alpakka/current/file.html#tailing-a-file-into-a-stream
+ * @deprecated since 0.10, Pekko Connectors' implementation instead https://pekko.apache.org/docs/pekko-connectors/current/file.html#tailing-a-file-into-a-stream
  */
 @Deprecated
 public final class FileTailSource extends GraphStage<SourceShape<ByteString>> {

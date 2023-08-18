@@ -32,7 +32,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  *
  * Note that the JDK watcher is notoriously slow on some platform (up to 1s after event actually happened on OSX for example)
  *
- * @deprecated since 0.10, use Alpakka's implementation instead https://developer.lightbend.com/docs/alpakka/current/file.html#listing-directory-contents
+ * @deprecated since 0.10, use Pekko Connectors' implementation instead https://pekko.apache.org/docs/pekko-connectors/current/file.html#listing-directory-contents
  */
 @Deprecated
 public final class DirectoryChanges extends GraphStage<SourceShape<Pair<Path, DirectoryChanges.Change>>> {

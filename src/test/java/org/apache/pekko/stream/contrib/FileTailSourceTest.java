@@ -6,7 +6,6 @@ package org.apache.pekko.stream.contrib;
 
 import org.apache.pekko.NotUsed;
 import org.apache.pekko.actor.ActorSystem;
-import org.apache.pekko.japi.Pair;
 import org.apache.pekko.stream.*;
 import org.apache.pekko.stream.javadsl.Framing;
 import org.apache.pekko.stream.javadsl.Keep;
@@ -27,9 +26,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import static org.junit.Assert.*;
 import scala.concurrent.duration.FiniteDuration;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 
