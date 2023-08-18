@@ -9,9 +9,9 @@ import akka.stream.ThrottleMode
 import akka.stream.scaladsl.Source
 import akka.stream.testkit.TestSubscriber.{OnComplete, OnNext}
 import akka.stream.testkit.scaladsl.TestSink
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 
-import scala.concurrent.duration.{FiniteDuration, _}
+import scala.concurrent.duration._
 
 class IntervalBasedRateLimiterSpec extends IntervalBasedThrottlerTestKit {
 

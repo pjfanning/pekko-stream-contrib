@@ -31,7 +31,7 @@ import scala.concurrent.duration.FiniteDuration
  * @see [[akka.stream.scaladsl.FlowOps#keepAlive]]
  * @see [[akka.stream.scaladsl.FlowOps#expand]]
  */
-final case class KeepAliveConcat[T](keepAliveFailoverSize: Int, interval: FiniteDuration, extrapolate: T ⇒ Seq[T])
+final case class KeepAliveConcat[T](keepAliveFailoverSize: Int, interval: FiniteDuration, extrapolate: T => Seq[T])
     extends GraphStage[FlowShape[T, T]] {
 
   require(keepAliveFailoverSize > 0, "The buffer keep alive failover size must be greater than 0.")

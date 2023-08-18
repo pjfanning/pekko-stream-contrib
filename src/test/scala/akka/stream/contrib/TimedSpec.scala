@@ -23,7 +23,7 @@ class TimedSpec extends BaseStreamSpec {
       val measureBetweenEvery = 5
       val n = 20
 
-      val printInfo = (interval: Duration) ⇒ {
+      val printInfo = (interval: Duration) => {
         testActor.ref ! interval
         info(s"Measured interval between $measureBetweenEvery elements was: $interval")
       }
@@ -40,7 +40,7 @@ class TimedSpec extends BaseStreamSpec {
       val testActor = TestProbe()
 
       val n = 50
-      val printInfo = (d: FiniteDuration) ⇒ {
+      val printInfo = (d: FiniteDuration) => {
         testActor.ref ! d
         info(s"Processing $n elements took $d")
       }
@@ -58,7 +58,7 @@ class TimedSpec extends BaseStreamSpec {
     "measure time it between elements matching a predicate" in {
       val probe = TestProbe()
 
-      val flow: Flow[Int, Long, _] = Flow[Int].map(_.toLong).timedIntervalBetween(in ⇒ in % 2 == 1, d ⇒ probe.ref ! d)
+      val flow: Flow[Int, Long, _] = Flow[Int].map(_.toLong).timedIntervalBetween(in => in % 2 == 1, d => probe.ref ! d)
 
       val c1 = TestSubscriber.manualProbe[Long]()
       Source(List(1, 2, 3)).via(flow).runWith(Sink.fromSubscriber(c1))
@@ -79,8 +79,8 @@ class TimedSpec extends BaseStreamSpec {
 
       // making sure the types come out as expected
       val flow: Flow[Int, String, _] =
-        Flow[Int].timed(_.map(_.toDouble).map(_.toInt).map(_.toString), duration ⇒ probe.ref ! duration).map {
-          s: String ⇒
+        Flow[Int].timed(_.map(_.toDouble).map(_.toInt).map(_.toString), duration => probe.ref ! duration).map {
+          s: String =>
             s + "!"
         }
 
@@ -95,7 +95,7 @@ class TimedSpec extends BaseStreamSpec {
 
       val s = c1.expectSubscription()
       s.request(200)
-      0 to 100 foreach { i ⇒
+      0 to 100 foreach { i =>
         c1.expectNext(i.toString + "!")
       }
       c1.expectComplete()

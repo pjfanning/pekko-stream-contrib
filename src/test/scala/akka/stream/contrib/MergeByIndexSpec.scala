@@ -10,13 +10,14 @@ import akka.stream.scaladsl.{Flow, GraphDSL, Partition, RunnableGraph, Sink, Sou
 import akka.stream.testkit.{TestPublisher, TestSubscriber}
 import akka.stream.{ActorMaterializer, ClosedShape, FlowShape, OverflowStrategy}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 import scala.util.Random
 
 //noinspection TypeAnnotation
-class MergeByIndexSpec extends WordSpec with MustMatchers with ScalaFutures {
+class MergeByIndexSpec extends AnyWordSpec with Matchers with ScalaFutures {
   implicit val system: ActorSystem = ActorSystem("merge-by-index")
   implicit val mat: ActorMaterializer = ActorMaterializer()
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(5.seconds)

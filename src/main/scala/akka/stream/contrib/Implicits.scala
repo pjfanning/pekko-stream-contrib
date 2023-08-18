@@ -28,14 +28,14 @@ object Implicits {
     /**
      * Measures time from receiving the first element and completion events - one for each subscriber of this `Flow`.
      */
-    def timed[O, Mat2](measuredOps: Source[I, Mat] ⇒ Source[O, Mat2],
-                       onComplete: FiniteDuration ⇒ Unit): Source[O, Mat2] =
+    def timed[O, Mat2](measuredOps: Source[I, Mat] => Source[O, Mat2],
+                       onComplete: FiniteDuration => Unit): Source[O, Mat2] =
       Timed.timed[I, O, Mat, Mat2](source, measuredOps, onComplete)
 
     /**
      * Measures rolling interval between immediately subsequent `matching(o: O)` elements.
      */
-    def timedIntervalBetween(matching: I ⇒ Boolean, onInterval: FiniteDuration ⇒ Unit): Source[I, Mat] =
+    def timedIntervalBetween(matching: I => Boolean, onInterval: FiniteDuration => Unit): Source[I, Mat] =
       Timed.timedIntervalBetween[I, Mat](source, matching, onInterval)
   }
 
@@ -49,14 +49,14 @@ object Implicits {
     /**
      * Measures time from receiving the first element and completion events - one for each subscriber of this `Flow`.
      */
-    def timed[Out, Mat2](measuredOps: Flow[I, O, Mat] ⇒ Flow[I, Out, Mat2],
-                         onComplete: FiniteDuration ⇒ Unit): Flow[I, Out, Mat2] =
+    def timed[Out, Mat2](measuredOps: Flow[I, O, Mat] => Flow[I, Out, Mat2],
+                         onComplete: FiniteDuration => Unit): Flow[I, Out, Mat2] =
       Timed.timed[I, O, Out, Mat, Mat2](flow, measuredOps, onComplete)
 
     /**
      * Measures rolling interval between immediately subsequent `matching(o: O)` elements.
      */
-    def timedIntervalBetween(matching: O ⇒ Boolean, onInterval: FiniteDuration ⇒ Unit): Flow[I, O, Mat] =
+    def timedIntervalBetween(matching: O => Boolean, onInterval: FiniteDuration => Unit): Flow[I, O, Mat] =
       Timed.timedIntervalBetween[I, O, Mat](flow, matching, onInterval)
   }
 
@@ -76,7 +76,7 @@ object Implicits {
      * @param resultFunction side-effect function which gets called with the result
      * @return Flow of the the same shape as the wrapped flow
      */
-    def measureLatency(resultFunction: TimedResult[O] ⇒ Unit): Flow[I, O, Mat] =
+    def measureLatency(resultFunction: TimedResult[O] => Unit): Flow[I, O, Mat] =
       LatencyTimer(flow, resultFunction)
 
     /**
