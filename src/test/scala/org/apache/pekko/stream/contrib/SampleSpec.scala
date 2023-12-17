@@ -5,7 +5,6 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream._
 import org.apache.pekko.stream.scaladsl.{ Sink, Source }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -16,7 +15,6 @@ import scala.language.postfixOps
 
 class SampleSpec extends AnyWordSpec with Matchers {
   private implicit val system: ActorSystem = ActorSystem("SampleTest")
-  private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   "Sample Stage" should {
     "returns every Nth element in stream" in {

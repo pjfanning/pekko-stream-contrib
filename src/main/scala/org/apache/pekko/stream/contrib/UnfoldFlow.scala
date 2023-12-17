@@ -66,5 +66,5 @@ private[pekko] class FanOut2unfoldingStage[O, S, E] private[stream] (
     generateGraphStageLogic: FanOutShape2[O, S, E] => UnfoldFlowGraphStageLogic[O, S, E])
     extends GraphStage[FanOutShape2[O, S, E]] {
   override val shape = new FanOutShape2[O, S, E]("unfoldFlow")
-  override def createLogic(attributes: Attributes) = generateGraphStageLogic(shape)
+  override def createLogic(attributes: Attributes): GraphStageLogic = generateGraphStageLogic(shape)
 }

@@ -80,7 +80,7 @@ class TimedSpec extends BaseStreamSpec {
       // making sure the types come out as expected
       val flow: Flow[Int, String, _] =
         Flow[Int].timed(_.map(_.toDouble).map(_.toInt).map(_.toString), duration => probe.ref ! duration).map {
-          s: String =>
+          (s: String) =>
             s + "!"
         }
 

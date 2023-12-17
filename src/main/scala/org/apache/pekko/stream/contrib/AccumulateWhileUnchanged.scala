@@ -5,7 +5,7 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.japi.function
-import org.apache.pekko.stream.stage.{ GraphStage, InHandler, OutHandler, TimerGraphStageLogic }
+import org.apache.pekko.stream.stage.{ GraphStage, GraphStageLogic, InHandler, OutHandler, TimerGraphStageLogic }
 import org.apache.pekko.stream.{ Attributes, FlowShape, Inlet, Outlet }
 
 import scala.collection.immutable
@@ -62,9 +62,9 @@ final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Eleme
   val in = Inlet[Element]("AccumulateWhileUnchanged.in")
   val out = Outlet[immutable.Seq[Element]]("AccumulateWhileUnchanged.out")
 
-  override def shape = FlowShape.of(in, out)
+  override def shape: FlowShape[Element, Seq[Element]] = FlowShape.of(in, out)
 
-  override def createLogic(inheritedAttributes: Attributes) = new TimerGraphStageLogic(shape) {
+  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new TimerGraphStageLogic(shape) {
 
     private var currentState: Option[Property] = None
     private var nbElements: Int = 0

@@ -24,9 +24,9 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
         .run()
 
       probe.sendNext(1)
-      probe.expectNoMsg(pulseInterval)
+      probe.expectNoMessage(pulseInterval)
       probe.sendNext(2)
-      probe.expectNoMsg(pulseInterval)
+      probe.expectNoMessage(pulseInterval)
       probe.sendComplete()
 
       whenReady(future) {
@@ -43,7 +43,7 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
 
       probe.ensureSubscription()
       // lets waste some time without a demand and let pulse run its timer
-      probe.expectNoMsg(pulseInterval * 10)
+      probe.expectNoMessage(pulseInterval * 10)
 
       probe.request(elements.length.toLong)
       elements.foreach(probe.expectNext)
@@ -73,9 +73,9 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
         .run()
 
       probe.sendNext(1)
-      probe.expectNoMsg(pulseInterval)
+      probe.expectNoMessage(pulseInterval)
       probe.sendNext(2)
-      probe.expectNoMsg(pulseInterval)
+      probe.expectNoMessage(pulseInterval)
       probe.sendComplete()
 
       whenReady(future) {

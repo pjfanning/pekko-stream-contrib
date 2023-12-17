@@ -85,7 +85,7 @@ class RetrySpec extends BaseStreamSpec {
       assert(sink.expectNext()._1 === Success(2))
       source.sendNext(4)
       assert(sink.expectNext()._1 === Success(2))
-      sink.expectNoMsg(3.seconds)
+      sink.expectNoMessage(3.seconds)
       source.sendComplete()
       sink.expectComplete()
     }
@@ -221,7 +221,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }
@@ -238,7 +238,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }
@@ -254,7 +254,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }
@@ -275,11 +275,11 @@ class RetrySpec extends BaseStreamSpec {
       source.sendNext(1)
       assert(sink.expectNext()._1 === Success(2))
       source.sendNext(2)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       source.sendNext(3)
       assert(sink.expectNext()._1 === Success(4))
       source.sendNext(4)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       source.sendComplete()
       sink.expectComplete()
     }
@@ -307,7 +307,7 @@ class RetrySpec extends BaseStreamSpec {
       source.sendNext(44)
       assert(sink.expectNext()._1 === failedElem)
       source.sendNext(42)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       source.sendComplete()
       sink.expectComplete()
     }
@@ -333,7 +333,7 @@ class RetrySpec extends BaseStreamSpec {
       assert(sink.expectNext()._1 === Success(2))
       source.sendNext(4)
       assert(sink.expectNext()._1 === Success(2))
-      sink.expectNoMsg(3.seconds)
+      sink.expectNoMessage(3.seconds)
       source.sendComplete()
       sink.expectComplete()
     }
@@ -469,7 +469,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }
@@ -488,7 +488,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }
@@ -504,7 +504,7 @@ class RetrySpec extends BaseStreamSpec {
 
       sink.request(99)
       source.sendNext(1)
-      sink.expectNoMsg()
+      sink.expectNoMessage()
       killSwitch.abort(failedElem.failed.get)
       sink.expectError(failedElem.failed.get)
     }

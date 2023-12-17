@@ -6,7 +6,7 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.scaladsl.{ Sink, Source }
 import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
-import org.apache.pekko.stream.{ ActorMaterializer, ActorMaterializerSettings }
+import org.apache.pekko.stream.{ ActorMaterializer, ActorMaterializerSettings, Materializer }
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -16,7 +16,7 @@ class KeepAliveConcatSpec extends BaseStreamSpec {
   val settings = ActorMaterializerSettings(system)
     .withInputBuffer(initialSize = 2, maxSize = 16)
 
-  implicit val materializer: ActorMaterializer = ActorMaterializer(settings)
+  implicit val materializer: Materializer = ActorMaterializer(settings)
 
   val sampleSource = Source((1 to 10).grouped(3).toVector)
   val expand = (lst: IndexedSeq[Int]) => lst.toList.map(Vector(_))
@@ -92,7 +92,7 @@ class KeepAliveConcatSpec extends BaseStreamSpec {
       downstream.request(10)
       downstream.expectNextN((1 to 3).grouped(1).toVector ++ (4 to 10).grouped(3).toVector)
 
-      downstream.expectNoMsg(1.5.second)
+      downstream.expectNoMessage(1.5.second)
       downstream.request(1)
 
       upstream.sendComplete()

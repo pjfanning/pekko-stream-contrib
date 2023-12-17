@@ -14,10 +14,10 @@ import com.typesafe.config.{ Config, ConfigFactory }
 
 import scala.concurrent.duration._
 
-class PekkoMockScheduler extends {
-      val time = new VirtualTime
-    } with MockScheduler(time) {
+class PekkoMockScheduler(val time: VirtualTime) extends MockScheduler(time) {
+  def this() = this(new VirtualTime)
   def this(config: Config, adapter: LoggingAdapter, tf: ThreadFactory) = this()
+
 }
 
 class TimeWindowSpec extends BaseStreamSpec {
@@ -42,12 +42,12 @@ class TimeWindowSpec extends BaseStreamSpec {
 
       sub.request(2)
 
-      sub.expectNoMsg(timeWindow + epsilonTime)
+      sub.expectNoMessage(timeWindow + epsilonTime)
       scheduler.time.advance(timeWindow + epsilonTime)
       scheduler.tick()
       sub.expectNext()
 
-      sub.expectNoMsg(timeWindow + epsilonTime)
+      sub.expectNoMessage(timeWindow + epsilonTime)
       scheduler.time.advance(timeWindow + epsilonTime)
       scheduler.tick()
       sub.expectNext()
@@ -65,7 +65,7 @@ class TimeWindowSpec extends BaseStreamSpec {
 
       sub.expectNext()
 
-      sub.expectNoMsg(timeWindow + epsilonTime)
+      sub.expectNoMessage(timeWindow + epsilonTime)
       scheduler.time.advance(timeWindow + epsilonTime)
       scheduler.tick()
       sub.expectNext()

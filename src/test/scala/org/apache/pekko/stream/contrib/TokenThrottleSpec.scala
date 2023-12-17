@@ -6,7 +6,6 @@ package org.apache.pekko.stream.contrib
 
 import java.util.concurrent.atomic.AtomicInteger
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.ActorMaterializer
 import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.pekko.stream.testkit.scaladsl.{ TestSink, TestSource }
 import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
@@ -20,7 +19,6 @@ import scala.concurrent.duration._
 class TokenThrottleSpec extends AnyWordSpec with Matchers with ScalaFutures {
 
   implicit val system: ActorSystem = ActorSystem()
-  implicit val mat: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
   "token throttle" should {

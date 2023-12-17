@@ -5,7 +5,7 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.ActorMaterializer
+import org.apache.pekko.stream.{ ActorMaterializer, Materializer }
 import com.typesafe.config.{ Config, ConfigFactory }
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.BeforeAndAfterAll
@@ -22,7 +22,7 @@ trait BaseStreamSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
     ActorSystem("default", systemConfig)
   }
 
-  protected implicit val mat: ActorMaterializer = ActorMaterializer()
+  protected implicit val mat: Materializer = Materializer(system)
 
   override protected def afterAll() = {
     Await.ready(system.terminate(), 42.seconds)

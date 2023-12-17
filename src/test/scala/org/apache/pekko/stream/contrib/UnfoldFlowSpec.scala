@@ -120,7 +120,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           pub.ensureSubscription()
           snk.ensureSubscription()
           sub.cancel()
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           snk.expectError()
         }
 
@@ -131,7 +131,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           snk.ensureSubscription()
           sub.cancel()
           snk.request(1)
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           snk.expectError()
         }
 
@@ -184,7 +184,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           pub.ensureSubscription()
           snk.ensureSubscription()
           sub.cancel()
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           pub.sendComplete()
           snk.expectComplete()
         }
@@ -237,7 +237,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           pub.ensureSubscription()
           snk.ensureSubscription()
           sub.cancel()
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           snk.expectError()
         }
 
@@ -248,7 +248,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           snk.ensureSubscription()
           sub.cancel()
           snk.request(1)
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           snk.expectError()
         }
 
@@ -301,7 +301,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           pub.ensureSubscription()
           snk.ensureSubscription()
           sub.cancel()
-          snk.expectNoMsg(timeout - 50.millis)
+          snk.expectNoMessage(timeout - 50.millis)
           pub.sendComplete()
           snk.expectComplete()
         }

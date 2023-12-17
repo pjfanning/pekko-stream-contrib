@@ -72,7 +72,7 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
 
         sink.request(42)
         SampleElements.Ones.foreach(src.sendNext)
-        sink.expectNoMsg(300.millis)
+        sink.expectNoMessage(300.millis)
         sink.expectNext(SampleElements.Ones)
         src.sendComplete()
         sink.expectComplete()
@@ -93,11 +93,11 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
         // Make more input data available without downstream demand for it
         SampleElements.Twos.foreach(src.sendNext)
         // Wait for longer than maxDuration so the timer expires and Twos are pushed
-        sink.expectNoMsg(200.millis)
+        sink.expectNoMessage(200.millis)
         SampleElements.Threes.foreach(src.sendNext)
         // Wait for longer than maxDuration so the timer expires.
         // Threes can't be pushed yet since there is no demand.
-        sink.expectNoMsg(200.millis)
+        sink.expectNoMessage(200.millis)
 
         // Verify all expected messages arrive at sink
         sink.request(2)
@@ -122,7 +122,7 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
 
         // Ask for more data, but wait long enough for the timer to expire before providing it
         sink.request(1)
-        sink.expectNoMsg(200.millis)
+        sink.expectNoMessage(200.millis)
 
         // Elements made available together should be grouped together
         SampleElements.Twos.foreach(src.sendNext)

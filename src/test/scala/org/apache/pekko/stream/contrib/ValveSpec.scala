@@ -6,9 +6,8 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.pattern.after
-import org.apache.pekko.stream.{ ActorMaterializer, StreamDetachedException }
+import org.apache.pekko.stream.{ Materializer, StreamDetachedException }
 import SwitchMode.{ Close, Open }
-import org.apache.pekko.stream.contrib.SwitchMode.{ Close, Open }
 import org.apache.pekko.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.pekko.stream.testkit.scaladsl._
 import org.scalatest.matchers.should.Matchers._
@@ -22,7 +21,7 @@ import scala.concurrent.duration._
 class ValveSpec extends AnyWordSpec with ScalaFutures {
 
   implicit val system: ActorSystem = ActorSystem()
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val materializer: Materializer = Materializer(system)
   implicit val executionContext: ExecutionContext = materializer.executionContext
 
   "A closed valve" should {
@@ -51,7 +50,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
 
       whenReady(switchFut) { switch =>
         probe.request(2)
-        probe.expectNoMsg(100 millis)
+        probe.expectNoMessage(100 millis)
 
         whenReady(switch.flip(Open)) {
           _ shouldBe true
@@ -82,7 +81,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
           _ shouldBe true
         }
         sourceProbe.sendNext(1)
-        sinkProbe.expectNoMsg(100 millis)
+        sinkProbe.expectNoMessage(100 millis)
 
         whenReady(switch.flip(Open)) {
           _ shouldBe true
@@ -95,7 +94,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
         whenReady(switch.flip(Open)) {
           _ shouldBe true
         }
-        sinkProbe.expectNoMsg(100 millis)
+        sinkProbe.expectNoMessage(100 millis)
 
         sinkProbe.request(1)
         sinkProbe.request(1)
@@ -206,7 +205,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
         }
 
         probe.request(1)
-        probe.expectNoMsg(100 millis)
+        probe.expectNoMessage(100 millis)
 
         whenReady(switch.flip(Open)) {
           _ shouldBe true

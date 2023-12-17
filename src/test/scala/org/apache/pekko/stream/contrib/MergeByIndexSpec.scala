@@ -8,7 +8,7 @@ import org.apache.pekko.NotUsed
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.scaladsl.{ Flow, GraphDSL, Partition, RunnableGraph, Sink, Source }
 import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
-import org.apache.pekko.stream.{ ActorMaterializer, ClosedShape, FlowShape, OverflowStrategy }
+import org.apache.pekko.stream.{ ClosedShape, FlowShape, OverflowStrategy }
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -19,7 +19,6 @@ import scala.util.Random
 //noinspection TypeAnnotation
 class MergeByIndexSpec extends AnyWordSpec with Matchers with ScalaFutures {
   implicit val system: ActorSystem = ActorSystem("merge-by-index")
-  implicit val mat: ActorMaterializer = ActorMaterializer()
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(5.seconds)
 
   "MergeByIndex" should {
