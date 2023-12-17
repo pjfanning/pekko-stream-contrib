@@ -6,9 +6,6 @@ scalaVersion := crossScalaVersions.value.head
 
 val PekkoVersion = "1.0.2"
 
-resolvers += "Sonatype Staging".at(
-  "https://oss.sonatype.org/content/repositories/staging")
-
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
   "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion % Test,
