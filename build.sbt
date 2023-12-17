@@ -1,10 +1,10 @@
 organization := "com.github.pjfanning"
 name := "pekko-stream-contrib"
 
-crossScalaVersions := Seq("2.13.11", "2.12.18")
+crossScalaVersions := Seq("2.13.12", "2.12.18")
 scalaVersion := crossScalaVersions.value.head
 
-val PekkoVersion = "1.0.1"
+val PekkoVersion = "1.0.2"
 
 resolvers += "Sonatype Staging".at(
   "https://oss.sonatype.org/content/repositories/staging")
@@ -12,10 +12,10 @@ resolvers += "Sonatype Staging".at(
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
   "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion % Test,
-  "junit" % "junit" % "4.12" % Test, // Common Public License 1.0
+  "junit" % "junit" % "4.13.2" % Test, // Common Public License 1.0
   "com.novocode" % "junit-interface" % "0.11" % Test, // BSD-like
   "com.google.jimfs" % "jimfs" % "1.1" % Test, // ApacheV2
-  "org.scalatest" %% "scalatest" % "3.2.16" % Test, // ApacheV2
+  "org.scalatest" %% "scalatest" % "3.2.17" % Test, // ApacheV2
   "org.scalamock" %% "scalamock" % "4.4.0" % Test, // ApacheV2
   "com.github.pjfanning" %% "pekko-mock-scheduler" % "0.6.0" % Test // ApacheV2
 )
