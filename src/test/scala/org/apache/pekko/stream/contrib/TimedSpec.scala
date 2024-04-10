@@ -104,7 +104,7 @@ class TimedSpec extends BaseStreamSpec {
         flow.runWith(Source.asSubscriber[Int], Sink.asPublisher[String](false))
 
       val c1 = TestSubscriber.manualProbe[String]()
-      val c2 = flowOut.subscribe(c1)
+      flowOut.subscribe(c1)
 
       val p = Source(0 to 100).runWith(Sink.asPublisher(false))
       p.subscribe(flowIn)
@@ -135,7 +135,7 @@ class TimedSpec extends BaseStreamSpec {
         flow.runWith(Source.asSubscriber[Int], Sink.asPublisher[String](false))
 
       val c1 = TestSubscriber.manualProbe[String]()
-      val c2 = flowOut.subscribe(c1)
+      flowOut.subscribe(c1)
 
       val p = Source.empty[Int].runWith(Sink.asPublisher(false))
       p.subscribe(flowIn)
