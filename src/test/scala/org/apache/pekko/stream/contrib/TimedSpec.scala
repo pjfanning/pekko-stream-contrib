@@ -33,7 +33,7 @@ class TimedSpec extends BaseStreamSpec {
       source.runWith(Sink.ignore)
       (1 until n / measureBetweenEvery).foreach { _ =>
         val duration = testActor.expectMsgType[FiniteDuration]
-        assert(duration.toMillis >= 0, s"$duration is not a positive duration")
+        assert(duration.toNanos > 0, s"$duration is not a positive duration")
       }
     }
 
@@ -48,7 +48,7 @@ class TimedSpec extends BaseStreamSpec {
 
       Source(1 to n).timed(_.map(identity), onComplete = printInfo).runWith(Sink.ignore)
       val duration = testActor.expectMsgType[FiniteDuration]
-      assert(duration.toMillis >= 0, s"$duration is not a positive duration")
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
     }
 
     "return Duration.Zero if the stream completes without starting" in {
@@ -87,7 +87,7 @@ class TimedSpec extends BaseStreamSpec {
 
       val duration = probe.expectMsgType[Duration]
       info(s"Got duration (first): $duration")
-      assert(duration.toMillis >= 0, s"$duration is not a positive duration")
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
     }
 
     "measure time from start to complete, by wrapping operations" in {
@@ -118,7 +118,7 @@ class TimedSpec extends BaseStreamSpec {
 
       val duration = probe.expectMsgType[Duration]
       info(s"Took: $duration")
-      assert(duration.toMillis >= 0, s"$duration is not a positive duration")
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
     }
 
     "return Duration.Zero if the stream completes without starting" in {
