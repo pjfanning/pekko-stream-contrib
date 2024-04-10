@@ -32,7 +32,8 @@ class TimedSpec extends BaseStreamSpec {
 
       source.runWith(Sink.ignore)
       (1 until n / measureBetweenEvery).foreach { _ =>
-        testActor.expectMsgType[FiniteDuration]
+        val duration = testActor.expectMsgType[FiniteDuration]
+        assert(duration.toNanos > 0, s"$duration is not a positive duration")
       }
     }
 
@@ -46,7 +47,21 @@ class TimedSpec extends BaseStreamSpec {
       }
 
       Source(1 to n).timed(_.map(identity), onComplete = printInfo).runWith(Sink.ignore)
-      testActor.expectMsgType[FiniteDuration]
+      val duration = testActor.expectMsgType[FiniteDuration]
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
+    }
+
+    "return Duration.Zero if the stream completes without starting" in {
+      val testActor = TestProbe()
+
+      val printInfo = (d: FiniteDuration) => {
+        testActor.ref ! d
+        info(s"Processing 0 elements took $d")
+      }
+
+      Source.empty[Any].timed(_.map(identity), onComplete = printInfo).runWith(Sink.ignore)
+      val duration = testActor.expectMsgType[FiniteDuration]
+      assert(duration == Duration.Zero, s"$duration is not zero")
     }
 
   }
@@ -72,6 +87,7 @@ class TimedSpec extends BaseStreamSpec {
 
       val duration = probe.expectMsgType[Duration]
       info(s"Got duration (first): $duration")
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
     }
 
     "measure time from start to complete, by wrapping operations" in {
@@ -88,7 +104,7 @@ class TimedSpec extends BaseStreamSpec {
         flow.runWith(Source.asSubscriber[Int], Sink.asPublisher[String](false))
 
       val c1 = TestSubscriber.manualProbe[String]()
-      val c2 = flowOut.subscribe(c1)
+      flowOut.subscribe(c1)
 
       val p = Source(0 to 100).runWith(Sink.asPublisher(false))
       p.subscribe(flowIn)
@@ -102,6 +118,35 @@ class TimedSpec extends BaseStreamSpec {
 
       val duration = probe.expectMsgType[Duration]
       info(s"Took: $duration")
+      assert(duration.toNanos > 0, s"$duration is not a positive duration")
+    }
+
+    "return Duration.Zero if the stream completes without starting" in {
+      val probe = TestProbe()
+
+      // making sure the types come out as expected
+      val flow: Flow[Int, String, _] =
+        Flow[Int].timed(_.map(_.toDouble).map(_.toInt).map(_.toString), duration => probe.ref ! duration).map {
+          (s: String) =>
+            s + "!"
+        }
+
+      val (flowIn: Subscriber[Int], flowOut: Publisher[String]) =
+        flow.runWith(Source.asSubscriber[Int], Sink.asPublisher[String](false))
+
+      val c1 = TestSubscriber.manualProbe[String]()
+      flowOut.subscribe(c1)
+
+      val p = Source.empty[Int].runWith(Sink.asPublisher(false))
+      p.subscribe(flowIn)
+
+      val s = c1.expectSubscription()
+      s.request(200)
+      c1.expectComplete()
+
+      val duration = probe.expectMsgType[Duration]
+      info(s"Took: $duration")
+      assert(duration == Duration.Zero, s"$duration is not zero")
     }
   }
 }
