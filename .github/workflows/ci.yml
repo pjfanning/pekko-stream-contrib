@@ -11,21 +11,23 @@ on:
 jobs:
   build:
     name: Code Style, Tests, Documentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       JAVA_OPTS: -Xms2G -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up JDK 11
-        uses: coursier/setup-action@v1.1.2
+      - name: Setup Java 11
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
-          jvm: adopt:11
+          distribution: temurin
+          java-version: 11
+
 
       - name: Cache Coursier cache
-        uses: coursier/cache-action@v6.4
+        uses: coursier/cache-action@v6
 
       - name: "Code style, tests, documentation"
         run: sbt "scalafmtCheckAll; scalafmtSbtCheck; test; doc"
