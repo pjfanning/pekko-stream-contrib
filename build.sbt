@@ -1,7 +1,7 @@
 organization := "com.github.pjfanning"
 name := "pekko-stream-contrib"
 
-crossScalaVersions := Seq("2.13.12", "2.12.18")
+crossScalaVersions := Seq("2.13.17", "2.12.20")
 scalaVersion := crossScalaVersions.value.head
 
 val PekkoVersion = "1.0.2"
@@ -11,8 +11,8 @@ libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion % Test,
   "junit" % "junit" % "4.13.2" % Test, // Common Public License 1.0
   "com.novocode" % "junit-interface" % "0.11" % Test, // BSD-like
-  "com.google.jimfs" % "jimfs" % "1.1" % Test, // ApacheV2
-  "org.scalatest" %% "scalatest" % "3.2.18" % Test, // ApacheV2
+  "com.google.jimfs" % "jimfs" % "1.3.1" % Test, // ApacheV2
+  "org.scalatest" %% "scalatest" % "3.2.19" % Test, // ApacheV2
   "org.scalamock" %% "scalamock" % "4.4.0" % Test, // ApacheV2
   "com.github.pjfanning" %% "pekko-mock-scheduler" % "0.6.0" % Test // ApacheV2
 )
