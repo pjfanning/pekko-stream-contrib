@@ -12,6 +12,7 @@ import org.apache.pekko.stream.scaladsl.{ Flow, Source }
 import org.apache.pekko.stream.stage._
 
 import scala.concurrent.duration._
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Provides operations needed to implement the `timed` DSL
@@ -87,11 +88,14 @@ object Timed extends TimedOps with TimedIntervalBetweenOps {
   final class TimedFlowContext {
     import scala.concurrent.duration._
 
-    private val _start = new AtomicLong
-    private val _stop = new AtomicLong
+    private val _started = new AtomicBoolean(false)
+    private val _start = new AtomicLong(0)
+    private val _stop = new AtomicLong(0)
 
-    def start(): Unit =
+    def start(): Unit = {
       _start.compareAndSet(0, System.nanoTime())
+      _started.set(true)
+    }
 
     def stop(): FiniteDuration = {
       _stop.compareAndSet(0, System.nanoTime())
@@ -99,9 +103,8 @@ object Timed extends TimedOps with TimedIntervalBetweenOps {
     }
 
     private def compareStartAndStop(): FiniteDuration = {
-      val stp = _stop.get
-      if (stp <= 0) Duration.Zero
-      else (stp - _start.get).nanos
+      if (!_started.get) Duration.Zero
+      else (_stop.get - _start.get).nanos
     }
   }
 
