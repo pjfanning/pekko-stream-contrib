@@ -4,7 +4,7 @@ name := "pekko-stream-contrib"
 crossScalaVersions := Seq("2.13.16", "2.12.20")
 scalaVersion := crossScalaVersions.value.head
 
-val PekkoVersion = "1.0.2"
+val PekkoVersion = "1.2.1"
 
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
