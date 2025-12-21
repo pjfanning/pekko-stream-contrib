@@ -39,7 +39,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
               case `done` => (1, 1)
             })
 
-        val sink = source.runWith(TestSink.probe)
+        val sink = source.runWith(TestSink())
 
         outputs.foreach { output =>
           sink.request(1)
@@ -65,7 +65,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
               }
               .buffer(buffSize, OverflowStrategy.backpressure))
 
-        val sink = bufferedSource(10).runWith(TestSink.probe)
+        val sink = bufferedSource(10).runWith(TestSink())
 
         sink.request(outputs.length.toLong)
         outputs.foreach(sink.expectNext(_))
@@ -82,7 +82,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
           case n               => Some((n * 3 + 1, n))
         }
 
-        val sink = source.runWith(TestSink.probe)
+        val sink = source.runWith(TestSink())
         outputs.foreach { output =>
           sink.request(1)
           sink.expectNext(output)
@@ -100,12 +100,12 @@ class UnfoldFlowSpec extends BaseStreamSpec {
 
         type PProbe = TestPublisher.Probe[(Int, Int)]
         val controlledFlow = Flow.fromSinkAndSourceMat[Int, (Int, Int), SProbe, PProbe, (SProbe, PProbe)](
-          TestSink.probe[Int],
-          TestSource.probe[(Int, Int)])(Keep.both)
+          TestSink[Int](),
+          TestSource[(Int, Int)]())(Keep.both)
         val source = SourceGen.unfoldFlow(1)(controlledFlow)
 
         "fail instantly when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -115,7 +115,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail after timeout when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -125,7 +125,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail when inner stream is canceled and pulled before completion" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -136,7 +136,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail when inner stream is canceled, pulled before completion, and finally aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -148,7 +148,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail after 3 elements when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -170,7 +170,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully instantly when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -179,7 +179,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully after timeout when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -190,7 +190,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully after 3 elements when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -215,14 +215,14 @@ class UnfoldFlowSpec extends BaseStreamSpec {
 
         type PProbe = TestPublisher.Probe[Int]
         val controlledFlow =
-          Flow.fromSinkAndSourceMat[Int, Int, SProbe, PProbe, (SProbe, PProbe)](TestSink.probe[Int],
-            TestSource.probe[Int])(Keep.both)
+          Flow.fromSinkAndSourceMat[Int, Int, SProbe, PProbe, (SProbe, PProbe)](TestSink[Int](),
+            TestSource[Int]())(Keep.both)
         val source = SourceGen.unfoldFlowWith(1, controlledFlow) { n =>
           Some((n + 1, n))
         }
 
         "fail instantly when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -232,7 +232,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail after timeout when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -242,7 +242,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail when inner stream is canceled and pulled before completion" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -253,7 +253,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail when inner stream is canceled, pulled before completion, and finally aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -265,7 +265,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "fail after 3 elements when aborted" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           val kill = new Exception("KILL!")
           sub.ensureSubscription()
           pub.ensureSubscription()
@@ -287,7 +287,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully instantly when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -296,7 +296,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully after timeout when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()
@@ -307,7 +307,7 @@ class UnfoldFlowSpec extends BaseStreamSpec {
         }
 
         "complete gracefully after 3 elements when stopped" in {
-          val ((sub, pub), snk) = source.toMat(TestSink.probe[Int])(Keep.both).run()
+          val ((sub, pub), snk) = source.toMat(TestSink[Int]())(Keep.both).run()
           sub.ensureSubscription()
           pub.ensureSubscription()
           snk.ensureSubscription()

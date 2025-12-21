@@ -8,6 +8,7 @@ import org.apache.pekko.stream.stage.{ GraphStageLogic, GraphStageWithMaterializ
 import org.apache.pekko.stream._
 import SwitchMode.{ Close, Open }
 
+import scala.annotation.nowarn
 import scala.concurrent.{ ExecutionContext, Future, Promise }
 
 /**
@@ -81,8 +82,9 @@ final class Valve[A](mode: SwitchMode) extends GraphStageWithMaterializedValue[F
       with InHandler
       with OutHandler {
 
-    val promise = Promise[ValveSwitch]
+    val promise = Promise[ValveSwitch]()
 
+    @nowarn("msg=structural type")
     private val switch = new ValveSwitch {
 
       val flipCallback = getAsyncCallback[(SwitchMode, Promise[Boolean])] {

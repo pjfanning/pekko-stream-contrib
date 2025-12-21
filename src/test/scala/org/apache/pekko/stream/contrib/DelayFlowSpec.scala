@@ -22,7 +22,7 @@ class DelayFlowSpec extends BaseStreamSpec {
       Source
         .empty[Int]
         .via(DelayFlow(Duration.Zero))
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
         .request(1)
         .expectComplete()
     }
@@ -37,7 +37,7 @@ class DelayFlowSpec extends BaseStreamSpec {
         .map(_ => System.nanoTime())
         .via(DelayFlow[Long](fixedDelay))
         .map(start => System.nanoTime() - start)
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
 
       elems.foreach(_ => {
         val next = probe
@@ -56,7 +56,7 @@ class DelayFlowSpec extends BaseStreamSpec {
 
       Source(elems)
         .via(DelayFlow[Int](Duration.Zero))
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
         .request(elems.size)
         .expectNextN(elems)
         .expectComplete()
@@ -78,7 +78,7 @@ class DelayFlowSpec extends BaseStreamSpec {
             DelayStrategy
               .linearIncreasingDelay(step, incWhile, initial, max)))
         .map(start => System.nanoTime() - start._2)
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
 
       elems.foreach(e =>
         if (incWhile((e, 1L))) {

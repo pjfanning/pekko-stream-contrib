@@ -22,7 +22,7 @@ class FeedbackLoopSpec extends BaseStreamSpec {
       val sub = Source(1 to N)
         .via(testedFlow)
         .via(Flow[Int].delay(1.millis, OverflowStrategy.backpressure))
-        .toMat(TestSink.probe[Int])(Keep.right)
+        .toMat(TestSink[Int]())(Keep.right)
         .run()
 
       sub.request(n = N.toLong)
@@ -38,10 +38,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
         .withAttributes(Attributes.inputBuffer(bufferSize, bufferSize))
       val testedFlow = FeedbackLoop(forwardFlow, feedbackArc, bufferSize)(Keep.none)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       val N = 1000L
@@ -59,10 +58,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
       val feedbackArc = Flow[Long].mapConcat(i => List(i, i))
       val testedFlow = FeedbackLoop(forwardFlow, feedbackArc, 1000)(Keep.none)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       sub.request(n = 1)
@@ -79,10 +77,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
       val feedbackArc = Flow[Long]
       val testedFlow = FeedbackLoop(forwardFlow, feedbackArc, 1)(Keep.none)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       sub.request(n = 10)
@@ -101,10 +98,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
       val feedbackArc = Flow[Long].map(i => if (i > 2L) i else throw new IllegalArgumentException(i.toString))
       val testedFlow = FeedbackLoop(forwardFlow, feedbackArc, 1)(Keep.none)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       sub.request(n = 10)
@@ -123,10 +119,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
         .partitionWith(identity)
       val testedFlow = forwardFlow.feedback(1)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       sub.request(n = 10)
@@ -148,10 +143,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
       val feedbackArc = Flow[Long].take(5)
       val testedFlow = FeedbackLoop(forwardFlow, feedbackArc, 1)(Keep.none)
 
-      val (pub, sub) = TestSource
-        .probe[Long]
+      val (pub, sub) = TestSource[Long]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Long])(Keep.both)
+        .toMat(TestSink[Long]())(Keep.both)
         .run()
 
       sub.request(n = 10)
@@ -174,10 +168,9 @@ class FeedbackLoopSpec extends BaseStreamSpec {
         .map { case (n, n1) => (n1, n + n1) }
       val testedFlow = forwardFlow.feedbackVia(feedbackArc, 1)
 
-      val (pub, sub) = TestSource
-        .probe[(Int, Int)]
+      val (pub, sub) = TestSource[(Int, Int)]()
         .via(testedFlow)
-        .toMat(TestSink.probe[Int])(Keep.both)
+        .toMat(TestSink[Int]())(Keep.both)
         .run()
 
       sub.request(n = 20)

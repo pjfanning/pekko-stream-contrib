@@ -38,7 +38,7 @@ class TimeWindowSpec extends BaseStreamSpec {
       val sub = Source
         .repeat(1)
         .via(summingWindow)
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
 
       sub.request(2)
 
@@ -59,7 +59,7 @@ class TimeWindowSpec extends BaseStreamSpec {
       val sub = Source
         .repeat(1)
         .via(summingWindow)
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
 
       sub.request(2)
 

@@ -17,8 +17,7 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
   "Pulse Stage" should {
 
     "signal demand once every interval" in {
-      val (probe, future) = TestSource
-        .probe[Int]
+      val (probe, future) = TestSource[Int]()
         .via(new Pulse[Int](pulseInterval.dilated))
         .toMat(Sink.seq)(Keep.both)
         .run()
@@ -39,7 +38,7 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
 
       val probe = Source(elements)
         .via(new Pulse[Int](pulseInterval.dilated))
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
 
       probe.ensureSubscription()
       // lets waste some time without a demand and let pulse run its timer
@@ -66,8 +65,7 @@ class PulseSpec extends BaseStreamSpec with ScalaFutures {
     }
 
     "signal demand once every interval" in {
-      val (probe, future) = TestSource
-        .probe[Int]
+      val (probe, future) = TestSource[Int]()
         .via(new Pulse[Int](pulseInterval.dilated, initiallyOpen = true))
         .toMat(Sink.seq)(Keep.both)
         .run()

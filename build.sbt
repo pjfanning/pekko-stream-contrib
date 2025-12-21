@@ -1,10 +1,10 @@
 organization := "com.github.pjfanning"
 name := "pekko-stream-contrib"
 
-crossScalaVersions := Seq("2.13.16", "2.12.20")
+crossScalaVersions := Seq("2.13.18", "2.12.21")
 scalaVersion := crossScalaVersions.value.head
 
-val PekkoVersion = "1.2.1"
+val PekkoVersion = "1.4.0"
 
 libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,

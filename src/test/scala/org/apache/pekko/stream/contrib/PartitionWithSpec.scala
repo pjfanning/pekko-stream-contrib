@@ -45,10 +45,9 @@ class PartitionWithSpec extends BaseStreamSpec {
   "PartitionWith" should {
     "partition ints according to their parity" in {
 
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .via(flow)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       sink.request(99)
       source.sendNext(1)
@@ -62,16 +61,15 @@ class PartitionWithSpec extends BaseStreamSpec {
     "not emit any value for an empty source" in {
       Source(Vector.empty[Int])
         .via(flow)
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
         .request(99)
         .expectComplete()
     }
 
     "fail on upstream failure" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .via(flow)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       sink.request(99)
       source.sendError(new Exception)
@@ -79,9 +77,9 @@ class PartitionWithSpec extends BaseStreamSpec {
     }
 
     "allow flow of values of one partition even when the other outlet was not pulled" in {
-      val source = TestSource.probe[Int]
-      val sink0 = TestSink.probe[Int]
-      val sink1 = TestSink.probe[Int]
+      val source = TestSource[Int]()
+      val sink0 = TestSink[Int]()
+      val sink1 = TestSink[Int]()
 
       val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
@@ -109,9 +107,9 @@ class PartitionWithSpec extends BaseStreamSpec {
     }
 
     "with eagerCancel=false (the default), continue after cancellation of one of the downstreams" in {
-      val source = TestSource.probe[Int]
-      val sink0 = TestSink.probe[Int]
-      val sink1 = TestSink.probe[Int]
+      val source = TestSource[Int]()
+      val sink0 = TestSink[Int]()
+      val sink1 = TestSink[Int]()
 
       val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
@@ -133,9 +131,9 @@ class PartitionWithSpec extends BaseStreamSpec {
     }
 
     "with eagerCancel=true, cancel and complete the other downstream after cancellation of one of the downstreams" in {
-      val source = TestSource.probe[Int]
-      val sink0 = TestSink.probe[Int]
-      val sink1 = TestSink.probe[Int]
+      val source = TestSource[Int]()
+      val sink0 = TestSink[Int]()
+      val sink1 = TestSink[Int]()
 
       val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
@@ -164,10 +162,9 @@ class PartitionWithSpec extends BaseStreamSpec {
 
       val flow = zipFanOut(Flow[Int].partitionWith(i => if (i % 2 == 0) Left(-i) else Right(i)))
 
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .via(flow)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(5)
