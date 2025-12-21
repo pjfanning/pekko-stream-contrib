@@ -42,7 +42,7 @@ object Retry {
   def apply[I, O, S, M](
       flow: Graph[FlowShape[(I, S), (Try[O], S)], M])(
       retryWith: S => Option[(I, S)]): Graph[FlowShape[(I, S), (Try[O], S)], M] =
-    GraphDSL.create(flow) { implicit b => origFlow =>
+    GraphDSL.createGraph(flow) { implicit b => origFlow =>
       import GraphDSL.Implicits._
 
       val retry = b.add(new RetryCoordinator[I, S, O](retryWith))
@@ -83,7 +83,7 @@ object Retry {
    */
   def concat[I, O, S, M](retriesLimit: Long, bufferLimit: Long, flow: Graph[FlowShape[(I, S), (Try[O], S)], M])(
       retryWith: S => Option[immutable.Iterable[(I, S)]]): Graph[FlowShape[(I, S), (Try[O], S)], M] =
-    GraphDSL.create(flow) { implicit b => origFlow =>
+    GraphDSL.createGraph(flow) { implicit b => origFlow =>
       import GraphDSL.Implicits._
 
       val retry = b.add(new RetryConcatCoordinator[I, S, O](retriesLimit, bufferLimit, retryWith))

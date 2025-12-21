@@ -96,7 +96,7 @@ object SourceGen {
   /** INTERNAL API */
   private[pekko] def unfoldFlowGraph[E, S, O, M](fanOut2Stage: GraphStage[FanOutShape2[O, S, E]],
       flow: Graph[FlowShape[S, O], M]): Source[E, M] =
-    Source.fromGraph(GraphDSL.create(flow) { implicit b =>
+    Source.fromGraph(GraphDSL.createGraph(flow) { implicit b =>
       { f =>
         {
           import GraphDSL.Implicits._

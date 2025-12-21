@@ -40,7 +40,7 @@ object TokenThrottle {
    * @return simple token throttle graph
    */
   def apply[A, M](tokenSource: Graph[SourceShape[Long], M])(costCalculation: A => Long): Graph[FlowShape[A, A], M] =
-    GraphDSL.create(tokenSource) { implicit b => tokens =>
+    GraphDSL.createGraph(tokenSource) { implicit b => tokens =>
       import GraphDSL.Implicits._
       val throttle = b.add(new TokenThrottle[A](costCalculation))
       tokens ~> throttle.in1

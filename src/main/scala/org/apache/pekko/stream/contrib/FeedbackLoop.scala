@@ -18,7 +18,7 @@ object FeedbackLoop {
   def apply[I, O0, O, M1, M2, M](forwardFlow: Graph[FanOutShape2[I, O0, O], M1],
       feedbackArc: Graph[FlowShape[O0, I], M2],
       feedbackBufferSize: Int)(combineMat: (M1, M2) => M): Flow[I, O, M] =
-    Flow.fromGraph(GraphDSL.create(forwardFlow, feedbackArc)(combineMat) { implicit builder => (fw, fb) =>
+    Flow.fromGraph(GraphDSL.createGraph(forwardFlow, feedbackArc)(combineMat) { implicit builder => (fw, fb) =>
       {
         import GraphDSL.Implicits._
 

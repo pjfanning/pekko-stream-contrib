@@ -148,7 +148,7 @@ object LatencyTimer {
   private[contrib] def createGraph[I, O, Mat](
       flow: Flow[I, O, Mat],
       sink: Graph[SinkShape[TimedResult[O]], Future[Done]])(clock: Clock): Flow[I, O, Mat] = {
-    val graph = GraphDSL.create(flow) { implicit builder: GraphDSL.Builder[Mat] =>
+    val graph = GraphDSL.createGraph(flow) { implicit builder: GraphDSL.Builder[Mat] =>
       import GraphDSL.Implicits._
       fl =>
         // Junctions need to be created from blueprint via `builder.add(...)`

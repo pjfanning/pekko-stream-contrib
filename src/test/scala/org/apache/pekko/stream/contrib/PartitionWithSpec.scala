@@ -13,7 +13,7 @@ class PartitionWithSpec extends BaseStreamSpec {
 
   private def fanOutAndIn[I, X, Y, O, M](fanOutGraph: Graph[FanOutShape2[I, X, Y], M],
       fanInGraph: Graph[FanInShape2[X, Y, O], NotUsed]): Flow[I, O, M] =
-    Flow.fromGraph(GraphDSL.create(fanOutGraph, fanInGraph)(Keep.left) { implicit builder => (fanOut, fanIn) =>
+    Flow.fromGraph(GraphDSL.createGraph(fanOutGraph, fanInGraph)(Keep.left) { implicit builder => (fanOut, fanIn) =>
       import GraphDSL.Implicits._
 
       fanOut.out0 ~> fanIn.in0
@@ -26,7 +26,7 @@ class PartitionWithSpec extends BaseStreamSpec {
     fanOutAndIn(fanOutGraph, Zip[O1, O2])
 
   private def mergeFanOut[I, O, M](fanOutGraph: Graph[FanOutShape2[I, O, O], M]): Flow[I, O, M] =
-    Flow.fromGraph(GraphDSL.create(fanOutGraph) { implicit builder => fanOut =>
+    Flow.fromGraph(GraphDSL.createGraph(fanOutGraph) { implicit builder => fanOut =>
       import GraphDSL.Implicits._
 
       val mrg = builder.add(Merge[O](2))
@@ -81,7 +81,7 @@ class PartitionWithSpec extends BaseStreamSpec {
       val sink0 = TestSink[Int]()
       val sink1 = TestSink[Int]()
 
-      val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
+      val graph = GraphDSL.createGraph(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
 
         val pw = b.add(PartitionWith[Int, Int, Int] {
@@ -111,7 +111,7 @@ class PartitionWithSpec extends BaseStreamSpec {
       val sink0 = TestSink[Int]()
       val sink1 = TestSink[Int]()
 
-      val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
+      val graph = GraphDSL.createGraph(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
 
         val partition = b.add(PartitionWith[Int, Int, Int](i => if (i % 2 == 0) Left(i) else Right(i)))
@@ -135,7 +135,7 @@ class PartitionWithSpec extends BaseStreamSpec {
       val sink0 = TestSink[Int]()
       val sink1 = TestSink[Int]()
 
-      val graph = GraphDSL.create(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
+      val graph = GraphDSL.createGraph(source, sink0, sink1)(Tuple3.apply) { implicit b => (src, snk0, snk1) =>
         import GraphDSL.Implicits._
 
         val partition =
