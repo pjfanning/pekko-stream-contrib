@@ -81,7 +81,7 @@ final class Valve[A](mode: SwitchMode) extends GraphStageWithMaterializedValue[F
       with InHandler
       with OutHandler {
 
-    val promise = Promise[ValveSwitch]
+    val promise = Promise[ValveSwitch]()
 
     private val switch = new ValveSwitch {
 
