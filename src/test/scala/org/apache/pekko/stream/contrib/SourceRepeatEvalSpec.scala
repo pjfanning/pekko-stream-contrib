@@ -17,7 +17,7 @@ class SourceRepeatEvalSpec extends BaseStreamSpec {
 
       val probe = SourceRepeatEval(() => int.getAndIncrement())
         .take(10)
-        .toMat(TestSink.probe)(Keep.right)
+        .toMat(TestSink())(Keep.right)
         .run()
 
       assert(probe.request(10).expectNextN(10) == (0 until 10))
@@ -27,7 +27,7 @@ class SourceRepeatEvalSpec extends BaseStreamSpec {
 
     "support cancellation" in {
       val (c, probe) = SourceRepeatEval(() => Random.nextInt)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       probe.requestNext()
@@ -44,7 +44,7 @@ class SourceRepeatEvalSpec extends BaseStreamSpec {
       val int = new AtomicInteger(0)
 
       val (c, probe) = SourceRepeatEval(() => int.getAndIncrement())
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       assert(probe.requestNext() == 0)

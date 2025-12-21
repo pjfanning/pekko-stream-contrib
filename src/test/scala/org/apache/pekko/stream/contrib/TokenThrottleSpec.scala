@@ -92,10 +92,9 @@ class TokenThrottleSpec extends AnyWordSpec with Matchers with ScalaFutures {
     }
 
     "completes if element is buffered and token source completes with too few remaining tokens" in {
-      val ((elems, tokens), out) = TestSource
-        .probe[Int]
-        .viaMat(TokenThrottle(TestSource.probe[Long])(_ => 5))(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+      val ((elems, tokens), out) = TestSource[Int]()
+        .viaMat(TokenThrottle(TestSource[Long]())(_ => 5))(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       tokens.sendNext(8)
@@ -107,10 +106,9 @@ class TokenThrottleSpec extends AnyWordSpec with Matchers with ScalaFutures {
     }
 
     "asks for tokens to satisfy current item cost even if downstream did not yet request" in {
-      val ((elems, tokens), out) = TestSource
-        .probe[Int]
-        .viaMat(TokenThrottle(TestSource.probe[Long])(_ => 100))(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+      val ((elems, tokens), out) = TestSource[Int]()
+        .viaMat(TokenThrottle(TestSource[Long]())(_ => 100))(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       elems.sendNext(1)
@@ -124,10 +122,9 @@ class TokenThrottleSpec extends AnyWordSpec with Matchers with ScalaFutures {
   }
 
   def throttledGraph: (TestPublisher.Probe[Int], TestPublisher.Probe[Long], TestSubscriber.Probe[Int]) = {
-    val ((elems, tokens), out) = TestSource
-      .probe[Int]
-      .viaMat(TokenThrottle(TestSource.probe[Long])(_ => 1))(Keep.both)
-      .toMat(TestSink.probe)(Keep.both)
+    val ((elems, tokens), out) = TestSource[Int]()
+      .viaMat(TokenThrottle(TestSource[Long]())(_ => 1))(Keep.both)
+      .toMat(TestSink())(Keep.both)
       .run()
     (elems, tokens, out)
   }

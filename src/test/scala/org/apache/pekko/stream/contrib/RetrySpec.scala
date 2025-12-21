@@ -21,14 +21,13 @@ class RetrySpec extends BaseStreamSpec {
 
   "Retry" should {
     "retry ints according to their parity" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i))
         .via(Retry(flow[Int]) { s =>
           if (s < 42) Some((s + 1, s + 1))
           else None
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -43,14 +42,13 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "retry descending ints until success" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, (i to 0 by -2).toList ::: List(i + 1)))
         .via(Retry(flow[List[Int]]) {
           case x :: xs => Some(x -> xs)
           case Nil     => throw new IllegalStateException("should not happen")
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -65,8 +63,7 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "retry squares by division" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i * i))
         .via(Retry(flow[Int]) {
           case x if x % 4 == 0 => Some((x / 2, x / 4))
@@ -75,7 +72,7 @@ class RetrySpec extends BaseStreamSpec {
             Some((sqrt, x))
           }
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -91,8 +88,7 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations after start" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.both)
         .map(i => (i, i * i))
         .via(Retry(flow[Int]) {
@@ -102,7 +98,7 @@ class RetrySpec extends BaseStreamSpec {
             Some((sqrt, x))
           }
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -115,14 +111,13 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations on start" in {
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.right)
         .map(i => (i, i))
         .via(Retry(flow[Int]) { x =>
           Some((x, x + 1))
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -131,14 +126,13 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations before start" in {
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.right)
         .map(i => (i, i))
         .via(Retry(flow[Int]) { x =>
           Some((x, x + 1))
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       killSwitch.abort(failedElem.failed.get)
@@ -148,8 +142,7 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow after start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i * i))
         .viaMat(Retry(innerFlow) {
           case x if x % 4 == 0 => Some((x / 2, x / 4))
@@ -158,7 +151,7 @@ class RetrySpec extends BaseStreamSpec {
             Some((sqrt, x))
           }
         })(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -172,13 +165,12 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow on start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(Retry(innerFlow) { x =>
           Some((x, x + 1))
         })(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -188,13 +180,12 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow before start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(Retry(innerFlow) { x =>
           Some((x, x + 1))
         })(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       killSwitch.abort(failedElem.failed.get)
@@ -211,12 +202,11 @@ class RetrySpec extends BaseStreamSpec {
     val stuckForeverRetrying = Retry(alwaysFailingFlow)(alwaysRecoveringFunc)
 
     "tolerate killswitch terminations before the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.both)
         .map(i => (i, i))
         .via(stuckForeverRetrying)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -227,13 +217,12 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations inside the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(
           Retry(alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc))(
           Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -244,12 +233,11 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations after the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i))
         .via(stuckForeverRetrying)
         .viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -262,13 +250,12 @@ class RetrySpec extends BaseStreamSpec {
 
   "RetryConcat" should {
     "swallow failed elements that are retried with an empty seq" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i))
         .via(Retry.concat(100, 100, flow[Int]) { _ =>
           Some(Nil)
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -285,8 +272,7 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "concat incremented ints and modulo 3 incremented ints from retries" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i))
         .via(Retry.concat(100, 100, flow[Int]) { os =>
           val s = (os + 1) % 3
@@ -294,7 +280,7 @@ class RetrySpec extends BaseStreamSpec {
           else if (os == 42) Some(Nil)
           else None
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -313,8 +299,7 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "retry squares by division" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i * i))
         .via(Retry.concat(100, 100, flow[Int]) {
           case x if x % 4 == 0 => Some(List((x / 2, x / 4)))
@@ -323,7 +308,7 @@ class RetrySpec extends BaseStreamSpec {
             Some(List((sqrt, x)))
           }
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -339,8 +324,7 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations after start" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.both)
         .map(i => (i, i * i))
         .via(Retry.concat(100, 100, flow[Int]) {
@@ -350,7 +334,7 @@ class RetrySpec extends BaseStreamSpec {
             Some(List((sqrt, x)))
           }
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -363,14 +347,13 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations on start" in {
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.right)
         .map(i => (i, i))
         .via(Retry.concat(100, 100, flow[Int]) { x =>
           Some(List((x, x + 1)))
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -379,14 +362,13 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations before start" in {
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.right)
         .map(i => (i, i))
         .via(Retry.concat(100, 100, flow[Int]) { x =>
           Some(List((x, x + 1)))
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       killSwitch.abort(failedElem.failed.get)
@@ -396,8 +378,7 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow after start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i * i))
         .viaMat(Retry.concat(100, 100, innerFlow) {
           case x if x % 4 == 0 => Some(List((x / 2, x / 4)))
@@ -406,7 +387,7 @@ class RetrySpec extends BaseStreamSpec {
             Some(List((sqrt, x)))
           }
         })(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -420,13 +401,12 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow on start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(Retry.concat(100, 100, innerFlow) { x =>
           Some(List((x, x + 1)))
         })(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -436,13 +416,12 @@ class RetrySpec extends BaseStreamSpec {
 
     "tolerate killswitch terminations inside the flow before start" in {
       val innerFlow = flow[Int].viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right)
-      val (killSwitch, sink) = TestSource
-        .probe[Int]
+      val (killSwitch, sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(Retry.concat(100, 100, innerFlow) { x =>
           Some(List((x, x + 1)))
         })(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       killSwitch.abort(failedElem.failed.get)
@@ -459,12 +438,11 @@ class RetrySpec extends BaseStreamSpec {
     val stuckForeverRetrying = Retry.concat(Long.MaxValue, Long.MaxValue, alwaysFailingFlow)(alwaysRecoveringFunc)
 
     "tolerate killswitch terminations before the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .viaMat(KillSwitches.single[Int])(Keep.both)
         .map(i => (i, i))
         .via(stuckForeverRetrying)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -475,15 +453,14 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations inside the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i))
         .viaMat(
           Retry.concat(Long.MaxValue,
             Long.MaxValue,
             alwaysFailingFlow.viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.right))(alwaysRecoveringFunc))(
           Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -494,12 +471,11 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "tolerate killswitch terminations after the flow while on fail spin" in {
-      val ((source, killSwitch), sink) = TestSource
-        .probe[Int]
+      val ((source, killSwitch), sink) = TestSource[Int]()
         .map(i => (i, i))
         .via(stuckForeverRetrying)
         .viaMat(KillSwitches.single[(Try[Int], Int)])(Keep.both)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)
@@ -510,13 +486,12 @@ class RetrySpec extends BaseStreamSpec {
     }
 
     "finish only after processing all elements in stream" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .map(i => (i, i * i))
         .via(Retry.concat(100, 100, flow[Int]) {
           case x => Some(List.fill(x)(1 -> 1))
         })
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
 
       sink.request(99)

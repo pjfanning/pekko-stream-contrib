@@ -74,7 +74,7 @@ trait IntervalBasedThrottlerTestKit extends BaseStreamSpec {
       .map { batch =>
         (System.currentTimeMillis(), batch)
       }
-      .runWith(TestSink.probe[(Long, Seq[Int])])
+      .runWith(TestSink[(Long, Seq[Int])]())
 
     val (timestamps, batches) = {
 

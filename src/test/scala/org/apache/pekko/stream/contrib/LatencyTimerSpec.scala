@@ -47,7 +47,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
     (clockMock.instant _).expects().returns(baseInstant.plus(TimePassed.length, ChronoUnit.MILLIS))
 
     When("running the stream with one element")
-    val (sourceProbe, materializedValue) = TestSource.probe[String].via(measuredFlow).toMat(Sink.head)(Keep.both).run()
+    val (sourceProbe, materializedValue) = TestSource[String]().via(measuredFlow).toMat(Sink.head)(Keep.both).run()
     sourceProbe.sendNext("timer")
     sourceProbe.sendComplete()
     Await.result(materializedValue, 1.seconds)
@@ -92,7 +92,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
     (clockMock.instant _).expects().returns(baseInstant.plus(TimePassedThird.length, ChronoUnit.MILLIS))
 
     When("running the stream with one element, measuring the time")
-    val (sourceProbe, materializedValue) = TestSource.probe[Int].via(measuredFlow).toMat(Sink.last)(Keep.both).run()
+    val (sourceProbe, materializedValue) = TestSource[Int]().via(measuredFlow).toMat(Sink.last)(Keep.both).run()
     sourceProbe.sendNext(1)
     sourceProbe.sendNext(2)
     sourceProbe.sendNext(3)
@@ -114,8 +114,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
     val measuredFlow = Flow
       .fromFunction[String, String](s => s"hello $s")
       .measureLatency(Sink.ignore)
-    val (sourceProbe, materializedValue) = TestSource
-      .probe[String]
+    val (sourceProbe, materializedValue) = TestSource[String]()
       .via(measuredFlow)
       .toMat(Sink.head)(Keep.both)
       .run()
@@ -152,8 +151,7 @@ class LatencyTimerSpec extends AnyFeatureSpec with GivenWhenThen with Matchers w
     val flow = Flow.fromFunction[Int, Int](i => if (i == 2) throw new RuntimeException("foobar") else i)
     val measuredFlow =
       LatencyTimer.createGraph(flow, Sink.foreach[TimedResult[Int]](x => timerResult = x.measuredTime))(clockMock)
-    val (sourceProbe, materializedValue) = TestSource
-      .probe[Int]
+    val (sourceProbe, materializedValue) = TestSource[Int]()
       .via(measuredFlow)
       .withAttributes(ActorAttributes.supervisionStrategy(decider))
       .toMat(Sink.last)(Keep.both)

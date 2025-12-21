@@ -17,7 +17,7 @@ class PassThroughFlowSpec extends BaseStreamSpec {
 
       val probe: TestSubscriber.Probe[(Int, String)] = Source(1 to 10)
         .via(PassThroughFlow(originalFlow))
-        .toMat(TestSink.probe)(Keep.right)
+        .toMat(TestSink())(Keep.right)
         .run()
 
       probe
@@ -33,7 +33,7 @@ class PassThroughFlowSpec extends BaseStreamSpec {
 
       val probe: TestSubscriber.Probe[Int] = Source(1 to 10)
         .via(PassThroughFlow(originalFlow, Keep.left))
-        .toMat(TestSink.probe)(Keep.right)
+        .toMat(TestSink())(Keep.right)
         .run()
 
       probe
@@ -48,7 +48,7 @@ class PassThroughFlowSpec extends BaseStreamSpec {
 
       val probe: TestSubscriber.Probe[Int] = Source(1 to 10)
         .via(PassThroughFlow(originalFlow, (i: Int, o: Int) => o / i))
-        .toMat(TestSink.probe)(Keep.right)
+        .toMat(TestSink())(Keep.right)
         .run()
 
       probe

@@ -11,10 +11,9 @@ class AccumulateSpec extends BaseStreamSpec {
 
   "Accumulate" should {
     "emit folded vaules starting with the result of applying the given function to the given zero and the first pushed element" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .via(Accumulate(0)(_ + _))
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       sink.request(99)
       source.sendNext(1)
@@ -28,16 +27,15 @@ class AccumulateSpec extends BaseStreamSpec {
     "not emit any value for an empty source" in {
       Source(Vector.empty[Int])
         .via(Accumulate(0)(_ + _))
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
         .request(99)
         .expectComplete()
     }
 
     "fail on upstream failure" in {
-      val (source, sink) = TestSource
-        .probe[Int]
+      val (source, sink) = TestSource[Int]()
         .via(Accumulate(0)(_ + _))
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       sink.request(99)
       source.sendError(new Exception)

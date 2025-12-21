@@ -16,7 +16,7 @@ class LastElementSpec extends BaseStreamSpec {
     "materialize to the last element emitted by a finite nonempty successful source" in {
       val (lastElement, probe) = Source(Vector(1, 2, 3))
         .viaMat(LastElement())(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       probe
         .request(3)
@@ -28,7 +28,7 @@ class LastElementSpec extends BaseStreamSpec {
     "materialize to `None` for an empty successful source" in {
       val (lastElement, probe) = Source(Vector.empty[Int])
         .viaMat(LastElement())(Keep.right)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       probe
         .request(3)

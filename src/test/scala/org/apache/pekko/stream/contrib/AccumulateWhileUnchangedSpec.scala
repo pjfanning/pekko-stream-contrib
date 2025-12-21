@@ -18,7 +18,7 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
     "emit accumulated elements when the given property changes" in {
       val sink = Source(SampleElements.All)
         .via(AccumulateWhileUnchanged(_.value))
-        .toMat(TestSink.probe)(Keep.right)
+        .toMat(TestSink())(Keep.right)
         .run()
 
       sink.request(42)
@@ -30,16 +30,15 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
       Source
         .empty[Element]
         .via(AccumulateWhileUnchanged(_.value))
-        .runWith(TestSink.probe)
+        .runWith(TestSink())
         .request(42)
         .expectComplete()
     }
 
     "fail on upstream failure" in {
-      val (source, sink) = TestSource
-        .probe[Element]
+      val (source, sink) = TestSource[Element]()
         .via(AccumulateWhileUnchanged(_.value))
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       sink.request(42)
       source.sendError(new Exception)
@@ -50,7 +49,7 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
       "emit after maxElements or when the property changes" in {
         val sink = Source(SampleElements.All)
           .via(AccumulateWhileUnchanged(_.value, Some(2)))
-          .toMat(TestSink.probe)(Keep.right)
+          .toMat(TestSink())(Keep.right)
           .run()
 
         sink.request(42)
@@ -64,10 +63,10 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
 
     "used with maxDuration" should {
       "emit after maxDuration or when the property changes" in {
-        val (src, sink) = TestSource
-          .probe[Element]
+        val (src, sink) = TestSource[Element]()
+[Element]
           .via(AccumulateWhileUnchanged(_.value, maxDuration = Some(500.millis)))
-          .toMat(TestSink.probe[Seq[Element]])(Keep.both)
+          .toMat(TestSink[Seq[Element]]())(Keep.both)
           .run()
 
         sink.request(42)
@@ -79,10 +78,9 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
       }
 
       "emit after maxDuration with backpressure" in {
-        val (src, sink) = TestSource
-          .probe[Element]
+        val (src, sink) = TestSource[Element]()
           .via(AccumulateWhileUnchanged(_.value, maxDuration = Some(100.millis)))
-          .toMat(TestSink.probe[Seq[Element]])(Keep.both)
+          .toMat(TestSink[Seq[Element]]())(Keep.both)
           .run()
 
         // Pull/Push Ones without backpressure
@@ -109,10 +107,9 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
       }
 
       "emit after maxDuration with long wait" in {
-        val (src, sink) = TestSource
-          .probe[Element]
+        val (src, sink) = TestSource[Element]()
           .via(AccumulateWhileUnchanged(_.value, maxDuration = Some(100.millis)))
-          .toMat(TestSink.probe[Seq[Element]])(Keep.both)
+          .toMat(TestSink[Seq[Element]]())(Keep.both)
           .run()
 
         // Pull/Push Ones without backpressure
@@ -135,10 +132,9 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
 
     "used with maxElements and maxDuration" should {
       "emit without dropping" in {
-        val (src, sink) = TestSource
-          .probe[Element]
+        val (src, sink) = TestSource[Element]()
           .via(AccumulateWhileUnchanged(_.value, maxElements = Some(2), maxDuration = Some(500.millis)))
-          .toMat(TestSink.probe[Seq[Element]])(Keep.both)
+          .toMat(TestSink[Seq[Element]]())(Keep.both)
           .run()
 
         SampleElements.Twos.foreach(src.sendNext)

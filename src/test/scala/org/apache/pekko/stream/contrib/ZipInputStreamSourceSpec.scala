@@ -33,7 +33,7 @@ class ZipInputStreamSourceSpec extends BaseStreamSpec {
 
     "fail when the zip cannot be read and materialize to an Exception" in {
       val (ex, probe) = ZipInputStreamSource(() => throw new Exception)
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
       probe
         .expectSubscriptionAndError()
@@ -53,7 +53,7 @@ class ZipInputStreamSourceSpec extends BaseStreamSpec {
     val (totalBytesRead, probe) =
       ZipInputStreamSource(() => new ZipInputStream(sampleZipFile(numFiles, fileSize)), chunkSize)
         .map { case (_, bs) => bs.toVector }
-        .toMat(TestSink.probe)(Keep.both)
+        .toMat(TestSink())(Keep.both)
         .run()
     probe
       .request(totalRequested)
