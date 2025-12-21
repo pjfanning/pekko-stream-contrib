@@ -26,7 +26,7 @@ class SourceRepeatEvalSpec extends BaseStreamSpec {
     }
 
     "support cancellation" in {
-      val (c, probe) = SourceRepeatEval(() => Random.nextInt)
+      val (c, probe) = SourceRepeatEval(() => Random.nextInt())
         .toMat(TestSink())(Keep.both)
         .run()
 

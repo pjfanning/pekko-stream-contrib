@@ -23,7 +23,7 @@ class PartitionWithSpec extends BaseStreamSpec {
     })
 
   private def zipFanOut[I, O1, O2, M](fanOutGraph: Graph[FanOutShape2[I, O1, O2], M]): Flow[I, (O1, O2), M] =
-    fanOutAndIn(fanOutGraph, Zip[O1, O2])
+    fanOutAndIn(fanOutGraph, Zip[O1, O2]())
 
   private def mergeFanOut[I, O, M](fanOutGraph: Graph[FanOutShape2[I, O, O], M]): Flow[I, O, M] =
     Flow.fromGraph(GraphDSL.createGraph(fanOutGraph) { implicit builder => fanOut =>

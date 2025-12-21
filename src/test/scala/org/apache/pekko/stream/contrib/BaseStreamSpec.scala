@@ -5,7 +5,7 @@
 package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.stream.{ ActorMaterializer, Materializer }
+import org.apache.pekko.stream.Materializer
 import com.typesafe.config.{ Config, ConfigFactory }
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.BeforeAndAfterAll

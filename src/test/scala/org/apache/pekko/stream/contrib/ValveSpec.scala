@@ -318,7 +318,7 @@ class ValveSpec extends AnyWordSpec with ScalaFutures {
       whenReady(switchFut.zip(terminatedFut)) {
         case (switch, _) =>
           after(100 millis, system.scheduler) {
-            switch.getMode
+            switch.getMode()
           }.failed.futureValue shouldBe a[StreamDetachedException]
       }
     }
