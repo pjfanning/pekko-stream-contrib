@@ -64,7 +64,6 @@ class AccumulateWhileUnchangedSpec extends BaseStreamSpec {
     "used with maxDuration" should {
       "emit after maxDuration or when the property changes" in {
         val (src, sink) = TestSource[Element]()
-[Element]
           .via(AccumulateWhileUnchanged(_.value, maxDuration = Some(500.millis)))
           .toMat(TestSink[Seq[Element]]())(Keep.both)
           .run()
