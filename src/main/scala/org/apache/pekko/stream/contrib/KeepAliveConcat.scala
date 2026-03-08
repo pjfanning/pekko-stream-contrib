@@ -47,7 +47,7 @@ final case class KeepAliveConcat[T](keepAliveFailoverSize: Int, interval: Finite
       private val buffer = new java.util.ArrayDeque[T](keepAliveFailoverSize)
 
       override def preStart(): Unit = {
-        schedulePeriodically(None, interval)
+        scheduleAtFixedRate(None, interval, interval)
         pull(in)
       }
 

@@ -32,4 +32,4 @@ jobs:
         uses: coursier/cache-action@v6
 
       - name: "Code style, tests, documentation"
-        run: sbt "scalafmtCheckAll; scalafmtSbtCheck; test; doc"
+        run: sbt "scalafmtCheckAll; scalafmtSbtCheck; +test; doc"

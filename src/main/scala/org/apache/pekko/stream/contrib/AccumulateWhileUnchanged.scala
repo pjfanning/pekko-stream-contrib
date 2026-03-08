@@ -62,7 +62,7 @@ final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Eleme
   val in = Inlet[Element]("AccumulateWhileUnchanged.in")
   val out = Outlet[immutable.Seq[Element]]("AccumulateWhileUnchanged.out")
 
-  override def shape: FlowShape[Element, Seq[Element]] = FlowShape.of(in, out)
+  override def shape: FlowShape[Element, immutable.Seq[Element]] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new TimerGraphStageLogic(shape) {
 
@@ -114,7 +114,7 @@ final class AccumulateWhileUnchanged[Element, Property](propertyExtractor: Eleme
     override def preStart(): Unit = {
       super.preStart()
       maxDuration match {
-        case Some(max) => schedulePeriodically(None, max)
+        case Some(max) => scheduleAtFixedRate(None, max, max)
         case None      => ()
       }
     }

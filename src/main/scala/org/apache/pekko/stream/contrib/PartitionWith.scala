@@ -123,7 +123,7 @@ final class PartitionWith[In, Out0, Out1] private (p: In => Either[Out0, Out1], 
           }
           else if (!hasBeenPulled(in)) pull(in)
 
-        override def onDownstreamFinish(): Unit =
+        override def onDownstreamFinish(cause: Throwable): Unit =
           downstreamFinished()
       })
 
@@ -142,7 +142,7 @@ final class PartitionWith[In, Out0, Out1] private (p: In => Either[Out0, Out1], 
           }
           else if (!hasBeenPulled(in)) pull(in)
 
-        override def onDownstreamFinish(): Unit =
+        override def onDownstreamFinish(cause: Throwable): Unit =
           downstreamFinished()
       })
 

@@ -40,7 +40,7 @@ final class Pulse[T](val interval: FiniteDuration, val initiallyOpen: Boolean = 
 
       private def startPulsing() = {
         pulsing = true
-        schedulePeriodically("PulseTimer", interval)
+        scheduleAtFixedRate("PulseTimer", interval, interval)
       }
       private var pulsing = false
     }

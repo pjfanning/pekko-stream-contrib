@@ -30,7 +30,7 @@ private[pekko] abstract class UnfoldFlowGraphStageLogic[O, S, E] private[stream]
         pushedToCycle = true
       }
 
-      override def onDownstreamFinish() =
+      override def onDownstreamFinish(cause: Throwable): Unit =
         // Do Nothing until `timeout` to try and intercept completion as downstream,
         // but cancel stream after timeout if inlet is not closed to prevent deadlock.
         materializer.scheduleOnce(

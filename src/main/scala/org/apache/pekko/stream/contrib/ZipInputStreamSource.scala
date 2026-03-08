@@ -156,12 +156,12 @@ final class ZipInputStreamSource private (in: () => ZipInputStream,
               }
           }
 
-          override def onDownstreamFinish(): Unit =
+          override def onDownstreamFinish(cause: Throwable): Unit =
             try {
               is.close()
             } finally {
               matValue.success(readBytesTotal)
-              super.onDownstreamFinish()
+              super.onDownstreamFinish(cause)
             }
         }) // end of handler
 

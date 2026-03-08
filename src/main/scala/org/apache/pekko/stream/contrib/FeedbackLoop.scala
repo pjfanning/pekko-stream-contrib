@@ -69,7 +69,7 @@ object FeedbackLoop {
           new OutHandler {
             override def onPull(): Unit = pull(shape.in)
 
-            override def onDownstreamFinish(): Unit = {
+            override def onDownstreamFinish(cause: Throwable): Unit = {
               downstreamFinished = true
               if (!hasBeenPulled(shape.in)) {
                 pull(shape.in)

@@ -165,7 +165,7 @@ object Retry {
               }
             }
 
-          override def onDownstreamFinish() = {
+          override def onDownstreamFinish(cause: Throwable): Unit = {
             // Do Nothing, intercept completion as downstream
           }
         })
@@ -278,7 +278,7 @@ object Retry {
               numElementsInCycle += 1
             }
 
-          override def onDownstreamFinish() =
+          override def onDownstreamFinish(cause: Throwable): Unit =
             materializer.scheduleOnce(
               timeout,
               new Runnable {
