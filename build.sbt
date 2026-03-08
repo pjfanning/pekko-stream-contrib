@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
   "com.github.sbt" % "junit-interface" % "0.13.3" % Test, // BSD-like
   "com.google.jimfs" % "jimfs" % "1.3.1" % Test, // ApacheV2
   "org.scalatest" %% "scalatest" % "3.2.19" % Test, // ApacheV2
-  "org.scalamock" %% "scalamock" % "4.4.0" % Test, // ApacheV2
+  "org.scalamock" %% "scalamock" % "6.2.0" % Test, // ApacheV2
   "com.github.pjfanning" %% "pekko-mock-scheduler" % "0.6.0" % Test // ApacheV2
 )
 
