@@ -6,17 +6,17 @@ package org.apache.pekko.stream.contrib
 
 import org.apache.pekko.stream.scaladsl.{ Sink, Source }
 import org.apache.pekko.stream.testkit.{ TestPublisher, TestSubscriber }
-import org.apache.pekko.stream.{ ActorMaterializer, ActorMaterializerSettings, Materializer }
+import com.typesafe.config.{ Config, ConfigFactory }
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class KeepAliveConcatSpec extends BaseStreamSpec {
 
-  val settings = ActorMaterializerSettings(system)
-    .withInputBuffer(initialSize = 2, maxSize = 16)
-
-  implicit val materializer: Materializer = ActorMaterializer(settings)
+  override protected def config: Config = ConfigFactory.parseString(
+    """pekko.stream.materializer.initial-input-buffer-size = 2
+       |pekko.stream.materializer.max-input-buffer-size = 16
+       |""".stripMargin)
 
   val sampleSource = Source((1 to 10).grouped(3).toVector)
   val expand = (lst: IndexedSeq[Int]) => lst.toList.map(Vector(_))
